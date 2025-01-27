@@ -1,0 +1,55 @@
+{
+    "name": "webgame",
+    "version": "1.0.0",
+    "description": "",
+    "author": "jcv8000",
+    "license": "MIT",
+    "private": "true",
+    "type": "module",
+    "scripts": {
+        "client:build": "bunx --bun vite build",
+        "client:dev": "bunx --bun vite",
+        "server:dev": "bun --bun --watch --no-clear-screen server/index.ts",
+        "dev": "NODE_ENV='development' concurrently -n Server,Client -c yellow,green \"bun:server:dev\" \"bun:client:dev\"",
+        "serve": "bunx --bun vite build && bun --bun server/index.ts",
+        "clean": "rimraf .vite/",
+        "typecheck": "tsc"
+    },
+    "devDependencies": {
+        "@types/bun": "^1.2.0",
+        "@types/express": "^5.0.0",
+        "@types/js-cookie": "^3.0.6",
+        "@types/node": "22",
+        "@types/react": "^19.0.8",
+        "@types/react-dom": "^19.0.3",
+        "@vitejs/plugin-react": "^4.3.4",
+        "concurrently": "^9.1.2",
+        "eslint": "^9.19.0",
+        "eslint-plugin-react-hooks": "^5.1.0",
+        "eslint-plugin-react-refresh": "^0.4.18",
+        "globals": "^15.14.0",
+        "prettier": "^3.4.2",
+        "rimraf": "^6.0.1",
+        "typescript": "^5.7.3",
+        "typescript-eslint": "^8.21.0",
+        "vite": "^6.0.11",
+        "vite-tsconfig-paths": "^5.1.4"
+    },
+    "dependencies": {
+        "@mantine/core": "^7.16.2",
+        "@mantine/hooks": "^7.16.2",
+        "@mantine/notifications": "^7.16.2",
+        "express": "^5.0.1",
+        "js-cookie": "^3.0.5",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-router": "^7.1.3",
+        "socket.io": "^4.8.1",
+        "socket.io-client": "^4.8.1",
+        "uuid": "^11.0.5",
+        "valtio": "^2.1.3"
+    },
+    "engines": {
+        "node": ">=18"
+    }
+}
