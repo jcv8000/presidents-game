@@ -10,6 +10,9 @@ export default defineConfig(() => {
         plugins: [react(), paths()],
         build: {
             outDir: ".vite"
+        },
+        server: {
+            host: "localhost"
         }
     };
 });

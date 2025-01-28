@@ -1,9 +1,10 @@
 import { Socket as ClientSocket } from "socket.io-client";
-import { SanitizedGameState } from "types/Game";
+import { SanitizedGameState, Card } from "types/Game";
 import { Server, Socket as ServerSocket } from "socket.io";
 
 interface ServerToClientEvents {
     gameStateUpdate: (state: SanitizedGameState) => void;
+    playerSkipped: (name: string) => void;
 }
 
 type Response = {
@@ -19,7 +20,13 @@ interface ClientToServerEvents {
         callback: (resp: Response) => void
     ) => void;
 
-    sendChat: (resp: { chat: string }, callback: (data: Response) => void) => void;
+    sendChat: (resp: { chat: string }, callback: (resp: Response) => void) => void;
+
+    startGame: (callback: (resp: Response) => void) => void;
+
+    playCards: (data: { cards: Card[] }, callback: (resp: Response) => void) => void;
+
+    knock: (callback: (resp: Response) => void) => void;
 }
 
 interface SocketData {

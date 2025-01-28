@@ -157,7 +157,6 @@ export default function Game() {
                                     <span style={{ color: p.connected ? "green" : "red" }}>
                                         {p.name}
                                     </span>
-                                    : {p.chatsSent} chats
                                 </div>
                             ))}
                         </div>

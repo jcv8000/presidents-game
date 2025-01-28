@@ -2,12 +2,26 @@ import { notifications } from "@mantine/notifications";
 
 export function showErrorNotification(props: { title?: string; message?: string }) {
     const { title, message } = props;
+    if (message) {
+        notifications.show({
+            title: title || "Error",
+            message: message,
+            withCloseButton: true,
+            withBorder: true,
+            color: "red",
+            autoClose: 10_000
+        });
+    }
+}
+
+export function showGameNotification(props: { title?: string; message: string }) {
+    const { title, message } = props;
+
     notifications.show({
-        title: title || "Error",
+        title: title || "Notification",
         message: message,
         withCloseButton: true,
         withBorder: true,
-        color: "red",
-        autoClose: 10_000
+        autoClose: 3_000
     });
 }
