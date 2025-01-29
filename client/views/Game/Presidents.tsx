@@ -16,7 +16,11 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
 
     const isMyTurn = context.gameState.whosTurn?.name == context.name || false;
 
-    const plays = getPossiblePlays(myHand, context.gameState.currentCard as Card[]);
+    const plays = getPossiblePlays(
+        myHand,
+        context.gameState.currentCard as Card[],
+        context.gameState.firstPlayOfRound
+    );
 
     return (
         <div>
@@ -56,7 +60,8 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                         <button
                             style={{ marginBottom: 8 }}
                             onClick={() => {
-                                socket.emit("knock", ({ error }) => {
+                                // Knock
+                                socket.emit("playCards", { cards: [] }, ({ error }) => {
                                     if (error) showErrorNotification({ message: error });
                                 });
                             }}
@@ -96,19 +101,30 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
     );
 }
 
-function getPossiblePlays(hand: Card[], currentCard: Card[]): Card[][] {
+function getPossiblePlays(hand: Card[], currentCard: Card[], firstPlayOfRound: boolean): Card[][] {
     let plays: Card[][] = [];
 
     const map = new Map<CARD_RANK, Card[]>();
 
     // get card counts
     hand.forEach((c) => {
-        const m = map.get(c.rank);
+        if (firstPlayOfRound) {
+            if (c.rank == "3") {
+                const m = map.get(c.rank);
 
-        if (m) m.push(c);
-        else map.set(c.rank, [c]);
+                if (m) m.push(c);
+                else map.set(c.rank, [c]);
 
-        plays.push([c]);
+                if (c.suit == "CLUBS") plays.push([c]);
+            }
+        } else {
+            const m = map.get(c.rank);
+
+            if (m) m.push(c);
+            else map.set(c.rank, [c]);
+
+            plays.push([c]);
+        }
     });
 
     // add multi-card plays

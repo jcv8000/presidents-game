@@ -6,6 +6,9 @@ export type Card = {
     rank: CARD_RANK;
     suit: "CLUBS" | "SPADES" | "HEARTS" | "DIAMONDS" | "JOKER";
 };
+export function cardReferencesEquivalent(a: Card, b: Card) {
+    return a.rank == b.rank && a.suit == b.suit;
+}
 
 export const CARD_VALUES: { [key in CARD_RANK]: number } = {
     "3": 3,
@@ -63,8 +66,8 @@ type Chat = {
 export class GameState {
     host: Player | null = null;
 
-    // lobby -> in-game -> between-rounds -> trading-cards -> in-game -> ...
-    stage: "lobby" | "in-game" | "trading-cards" = "lobby";
+    // lobby -> in-game -> trading-cards -> in-game -> ...
+    stage: "lobby" | "in-game" | "ended" = "lobby";
 
     players: Player[] = [];
     chat: Chat[] = [];
@@ -72,26 +75,12 @@ export class GameState {
     currentCard: Card[] = [];
     whosTurn: Player | null = null;
     stillHasCards: Player[] = [];
-    skipped = 0;
-    cardsPlayedCount: { [key in CARD_RANK]: number } = {
-        "3": 0,
-        "4": 0,
-        "5": 0,
-        "6": 0,
-        "7": 0,
-        "8": 0,
-        "9": 0,
-        "10": 0,
-        J: 0,
-        Q: 0,
-        K: 0,
-        A: 0,
-        "2": 0,
-        JOKER: 0
-    };
+    skip = 0;
+    // sameCardsPlayedInARow: Card[] = [];
     whoPlayedLastCard: Player | null = null;
 
     round = 0;
+    firstPlayOfRound = true;
     president: Player | null = null;
     vicePresident: Player | null = null;
     secondToLast: Player | null = null;
@@ -110,52 +99,78 @@ export class GameState {
         // TODO offset "who the dealer is" for each round
         for (let i = 0; i < 54; i++) {
             const card = deck.shift();
-            if (card) this.players[(i + this.round) % this.players.length].hand.push(card);
+            if (card) this.players[(i + this.round - 1) % this.players.length].hand.push(card);
         }
     }
 
-    resetCardsPlayedCount() {
-        this.cardsPlayedCount = {
-            "3": 0,
-            "4": 0,
-            "5": 0,
-            "6": 0,
-            "7": 0,
-            "8": 0,
-            "9": 0,
-            "10": 0,
-            J: 0,
-            Q: 0,
-            K: 0,
-            A: 0,
-            "2": 0,
-            JOKER: 0
-        };
-    }
-
-    startFirstRound() {
-        this.dealCards();
-        this.whosTurn = this.players[0];
-        this.currentCard = [];
-        this.stillHasCards = Array.from(this.players);
-        this.skipped = 0;
-        this.resetCardsPlayedCount();
-    }
-
-    startNewRound() {
+    startRound() {
         this.round++;
-
         this.dealCards();
-        this.whosTurn = this.players[0];
+        if (this.round >= 2) {
+            // make players trade cards
+        }
+
+        this.players.forEach((p) => {
+            p.hand.forEach((c) => {
+                if (cardReferencesEquivalent(c, { rank: "3", suit: "CLUBS" })) this.whosTurn = p;
+            });
+        });
+
         this.currentCard = [];
         this.stillHasCards = Array.from(this.players);
-        this.skipped = 0;
-        this.resetCardsPlayedCount();
-
-        // make president/vice/2nd to last/loser swap cards
+        this.skip = 0;
+        this.whoPlayedLastCard = null;
+        this.firstPlayOfRound = true;
     }
+
+    // /**
+    //  * Assumes the server already checked the player's auth,
+    //  * and the play is completely legal.
+    //  * Server does all validity checking, this does all logic.
+    //  * @param cards Playing no cards [] is knocking.
+    //  */
+    // playCards(player: Player, cards: Card[]) {
+    //     const wipe = () => {
+    //         this.skipped = 0;
+    //         this.whoPlayedLastCard = null;
+    //         this.sameCardsPlayed = 0;
+    //         this.currentCard = [];
+    //     };
+
+    //     // remove cards from player's hand
+    //     cards.forEach((c) => {
+    //         player.hand.forEach((handCard) => {
+    //             if (cardReferencesEquivalent(c, handCard)) {
+    //                 player.hand.splice(player.hand.indexOf(handCard), 1);
+    //             }
+    //         });
+    //     });
+
+    //     // check if joker
+    //     if (cards.length > 0 && cards[0].rank == "JOKER") {
+    //         wipe();
+    //         return;
+    //     }
+
+    //     // Check if player is out of cards
+    //     if (player.hand.length == 0) {
+    //         wipe();
+
+    //         const index = this.stillHasCards.indexOf(player);
+    //         this.whosTurn = this.stillHasCards[(index + 1) % this.stillHasCards.length];
+    //         this.stillHasCards.splice(index, 1);
+
+    //     }
+
+    //     // Wipe? (4th card of rank played in a row)
+    //     // Skipping?
+    //     // finish
+    //     // Check if next player is the one who played the last card
+    // }
 }
 
+/* TODO in socket events, send out fully sanitized gameState to all OTHER players,
+   send out gameState with that player's hand in-tact to sender */
 export type SanitizedGameState = GameState & { sanitized: true };
 export function sanitizeGameState(state: GameState) {
     const newState = structuredClone(state) as SanitizedGameState;

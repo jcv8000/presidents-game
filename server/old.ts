@@ -1,11 +1,5 @@
 import { UUID_LENGTH } from "types/constants";
-import {
-    CARD_VALUES,
-    cardReferencesEquivalent,
-    GameState,
-    Player,
-    sanitizeGameState
-} from "types/Game";
+import { CARD_VALUES, GameState, Player, sanitizeGameState } from "types/Game";
 import { generateRoomCode } from "./utils/generateRoomCode";
 import { setupServer } from "./utils/setupServer";
 
@@ -160,7 +154,7 @@ io.on("connection", (socket) => {
             // TODO kick disconnected players on start?
             game.players = game.players.filter((p) => p.connected == true);
 
-            game.startRound();
+            game.startFirstRound();
 
             io.to(roomCode).emit("gameStateUpdate", sanitizeGameState(game)); // includes sender
             callback({ success: true });
@@ -185,13 +179,13 @@ io.on("connection", (socket) => {
             return;
         }
 
-        //
-        // LEGALITY CHECKING
-        //
-
-        // Check if it's actually their turn
         if (game.whosTurn!.authToken != authToken) {
             callback({ success: false, error: "It's not your turn to play." });
+            return;
+        }
+
+        if (!game.stillHasCards.includes(player)) {
+            callback({ success: false, error: "You're already out of cards." });
             return;
         }
 
@@ -207,145 +201,162 @@ io.on("connection", (socket) => {
             }
         }
 
-        if (game.currentCard.length > 0 && cards.length > 0) {
-            // Check if they're playing the right amount of cards
-            if (cards.length != game.currentCard.length) {
-                callback({ success: false, error: "Didn't play the right amount of cards." });
-                return;
-            }
-
-            // Check if all cards are equal or higher in value
-            for (let i = 0; i < game.currentCard.length; i++) {
-                const cc = game.currentCard[i];
-                const c = cards[i];
-                if (CARD_VALUES[c.rank] < CARD_VALUES[cc.rank]) {
-                    callback({
-                        success: false,
-                        error: "Cards do not match or beat current cards."
-                    });
-                    return;
-                }
-            }
-        }
-
-        //
-        // ACTUAL GAMEPLAY LOGIC, PLAY IS LEGAL
-        //
-
-        const wipe = () => {
-            game.currentCard = [];
-            game.skip = 0;
-            game.whoPlayedLastCard = null;
-
-            sendNotification(`${game.whosTurn?.name} wiped.`);
-        };
-
-        const goNextPlayer = (opts?: { removeCurrentPlayer: boolean }) => {
-            const index = game.stillHasCards.indexOf(player);
-            game.whosTurn = game.stillHasCards[(index + 1) % game.stillHasCards.length];
-
-            if (opts && opts.removeCurrentPlayer === true) game.stillHasCards.splice(index, 1);
-        };
-
-        const sendGameUpdate = () => {
-            io.to(roomCode).emit("gameStateUpdate", sanitizeGameState(game)); // includes sender
-            callback({ success: true });
-        };
-
-        const sendNotification = (message: string) => {
-            io.to(roomCode).emit("notification", message); // includes sender
-        };
-
-        // Remove cards from player's hand
+        // remove cards from player's hand
         cards.forEach((c) => {
             player.hand.forEach((handCard) => {
-                if (cardReferencesEquivalent(c, handCard)) {
+                if (c.rank == handCard.rank && c.suit == handCard.suit) {
                     player.hand.splice(player.hand.indexOf(handCard), 1);
                 }
             });
+            game.cardsPlayedCount[c.rank] = game.cardsPlayedCount[c.rank] + 1;
         });
 
-        // Check if Joker
-        if (cards.length > 0 && cards[0].rank == "JOKER") {
-            game.firstPlayOfRound = false;
+        // Actual logic
+        let wiped = false;
+        const wipe = () => {
+            wiped = true;
+            game.skipped = 0;
+            game.currentCard = [];
+            game.resetCardsPlayedCount();
+        };
+
+        // Check if card is valid, Joker bypasses all rules
+        if (cards.length == 1 && cards[0].rank == "JOKER") {
+            // Wipe
             wipe();
-            sendGameUpdate();
-            return;
-        }
+        } else {
+            if (game.currentCard.length == 0) {
+                // Starting, can play whatever
+            } else {
+                // Check if playing the right amount of cards
+                if (cards.length != game.currentCard.length) {
+                    callback({
+                        success: false,
+                        error: "Didn't play the right amount of cards."
+                    });
+                    return;
+                }
 
-        // Check if player is out of cards
-        if (player.hand.length == 0) {
-            game.firstPlayOfRound = false;
-            wipe();
-            goNextPlayer({ removeCurrentPlayer: true });
-
-            if (game.president == null) {
-                game.president = player;
-                sendNotification(`${player.name} is the President.`);
-            } else if (game.vicePresident == null) {
-                game.vicePresident = player;
-                sendNotification(`${player.name} is the VP.`);
-            } else if (game.secondToLast == null) {
-                game.secondToLast = player;
-                sendNotification(`${player.name} got 2nd to last.`);
-            } else if (game.loser == null) {
-                game.loser = player;
-                sendNotification(`${player.name} lost the round.`);
-            }
-
-            sendGameUpdate();
-            return;
-        }
-
-        // Regular play
-        if (cards.length > 0) {
-            // Check for skip / wipe
-            let skipping = false;
-            if (game.currentCard.length == 1 || game.currentCard.length == 2) {
-                // Single cards
-                if (cards[0].rank == game.currentCard[0].rank) {
-                    skipping = true;
-                    game.skip++;
-                    if (game.skip == 3) {
-                        // WIPE
-                        game.firstPlayOfRound = false;
-                        wipe();
-                        sendGameUpdate();
+                // Check if all cards are equal or better in value
+                for (let i = 0; i < game.currentCard.length; i++) {
+                    const cc = game.currentCard[i];
+                    const c = cards[i];
+                    if (CARD_VALUES[c.rank] < CARD_VALUES[cc.rank]) {
+                        callback({
+                            success: false,
+                            error: "Cards do not beat or match current cards."
+                        });
                         return;
                     }
-
-                    const index = game.stillHasCards.indexOf(player);
-
-                    for (let i = 1; i <= game.skip; i++) {
-                        const skippedPlayer =
-                            game.stillHasCards[(index + i) % game.stillHasCards.length];
-                        sendNotification(`${skippedPlayer.name} was skipped!`);
-                    }
-
-                    game.whosTurn =
-                        game.stillHasCards[(index + game.skip + 1) % game.stillHasCards.length];
                 }
             }
-            game.firstPlayOfRound = false;
-            game.whoPlayedLastCard = player;
-            game.currentCard = cards;
-            if (!skipping) {
-                game.skip = 0;
-                goNextPlayer();
+        }
+
+        // check if out of cards
+        if (player.hand.length == 0) {
+            const index = game.stillHasCards.indexOf(player);
+            game.stillHasCards.splice(index, 1);
+
+            if (game.players.length >= 4) {
+                // Full normal game
+                if (game.president == null) game.president = player;
+                else if (game.vicePresident == null) game.vicePresident = player;
+                else if (game.stillHasCards.length == 1) game.secondToLast = player;
+                else if (game.stillHasCards.length == 0) game.loser = player;
+            } else {
+                // Only have president and loser
+                if (game.president == null) game.president = player;
+                else if (game.stillHasCards.length == 0) {
+                    // ROUND IS OVER!!!!!
+                    game.loser = player;
+                }
             }
-        }
 
-        // Knock
-        if (cards.length == 0) {
-            goNextPlayer();
-        }
-
-        // Check if next player is the one who played the last card
-        if (game.whosTurn == game.whoPlayedLastCard) {
-            sendNotification(`Turn got back to ${game.whosTurn?.name}.`);
             wipe();
+            game.whosTurn = game.stillHasCards[(index + 1) % game.stillHasCards.length];
+            game.stillHasCards.splice(index, 1);
+
+            io.to(roomCode).emit("gameStateUpdate", sanitizeGameState(game)); // includes sender
+            callback({ success: true });
+            return;
         }
 
-        sendGameUpdate();
+        // Wipe? (4th card played at any time) - Same player starts
+        if (game.cardsPlayedCount[cards[0].rank] == 4) {
+            wipe();
+            io.to(roomCode).emit("gameStateUpdate", sanitizeGameState(game)); // includes sender
+            callback({ success: true });
+            return;
+        }
+
+        // Skipping?
+        if (game.currentCard.length > 0 && game.currentCard[0].rank == cards[0].rank) {
+            const index = game.stillHasCards.indexOf(player);
+            game.skipped++;
+
+            for (let i = 1; i < game.skipped + 1; i++) {
+                const skippedPlayer = game.stillHasCards[(index + i) % game.stillHasCards.length];
+                io.to(roomCode).emit("playerSkipped", skippedPlayer.name);
+            }
+
+            game.whosTurn =
+                game.stillHasCards[(index + game.skipped + 1) % game.stillHasCards.length];
+            game.currentCard = cards;
+            game.whoPlayedLastCard = player;
+
+            io.to(roomCode).emit("gameStateUpdate", sanitizeGameState(game)); // includes sender
+            callback({ success: true });
+            return;
+        }
+
+        // Regular card play, no skips or wipes or going-out
+        if (!wiped) {
+            const index = game.stillHasCards.indexOf(player);
+            game.whosTurn = game.stillHasCards[(index + 1) % game.stillHasCards.length];
+            game.skipped = 0;
+            game.currentCard = cards;
+            game.whoPlayedLastCard = player;
+        }
+
+        io.to(roomCode).emit("gameStateUpdate", sanitizeGameState(game)); // includes sender
+        callback({ success: true });
+    });
+
+    socket.on("knock", (callback) => {
+        const { authToken, roomCode } = socket.data;
+
+        const game = games.get(roomCode);
+        if (game == undefined) {
+            callback({ success: false, error: "Room code not found." });
+            return;
+        }
+
+        const player = game.players.find((p) => p.authToken == authToken);
+        if (player == undefined) {
+            callback({ success: false, error: "Player is not in this room." });
+            return;
+        }
+
+        if (game.whosTurn!.authToken != authToken) {
+            callback({ success: false, error: "It's not your turn to play." });
+            return;
+        }
+
+        if (!game.stillHasCards.includes(player)) {
+            callback({ success: false, error: "You're already out of cards." });
+            return;
+        }
+
+        const index = game.stillHasCards.indexOf(player);
+        const nextPlayer = game.stillHasCards[(index + 1) % game.stillHasCards.length];
+
+        if (nextPlayer == game.whoPlayedLastCard) {
+            game.skipped = 0;
+            game.currentCard = [];
+        }
+        game.whosTurn = nextPlayer;
+
+        io.to(roomCode).emit("gameStateUpdate", sanitizeGameState(game)); // includes sender
+        callback({ success: true });
     });
 });

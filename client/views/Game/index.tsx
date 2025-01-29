@@ -85,8 +85,8 @@ export default function Game() {
             }, 2);
         });
 
-        socket.on("playerSkipped", (name) => {
-            showGameNotification({ title: "Skipped", message: `${name} was skipped` });
+        socket.on("notification", (message) => {
+            showGameNotification(message);
         });
 
         socket.connect();
@@ -95,7 +95,7 @@ export default function Game() {
             socket.off("connect");
             socket.off("disconnect");
             socket.off("gameStateUpdate");
-            socket.off("playerSkipped");
+            socket.off("notification");
             socket.disconnect();
         };
     }, [code, navigate]);
@@ -127,6 +127,11 @@ export default function Game() {
 
             {context.gameState.stage == "lobby" && <Lobby socket={socket} />}
             {context.gameState.stage == "in-game" && <Presidents socket={socket} />}
+            {context.gameState.stage == "ended" && (
+                <Center>
+                    <h1>Game over.</h1>
+                </Center>
+            )}
         </Container>
     );
 }

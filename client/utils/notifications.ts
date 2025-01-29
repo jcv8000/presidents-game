@@ -14,11 +14,8 @@ export function showErrorNotification(props: { title?: string; message?: string 
     }
 }
 
-export function showGameNotification(props: { title?: string; message: string }) {
-    const { title, message } = props;
-
+export function showGameNotification(message: string) {
     notifications.show({
-        title: title || "Notification",
         message: message,
         withCloseButton: true,
         withBorder: true,

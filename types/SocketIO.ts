@@ -4,7 +4,7 @@ import { Server, Socket as ServerSocket } from "socket.io";
 
 interface ServerToClientEvents {
     gameStateUpdate: (state: SanitizedGameState) => void;
-    playerSkipped: (name: string) => void;
+    notification: (message: string) => void;
 }
 
 type Response = {
@@ -25,8 +25,6 @@ interface ClientToServerEvents {
     startGame: (callback: (resp: Response) => void) => void;
 
     playCards: (data: { cards: Card[] }, callback: (resp: Response) => void) => void;
-
-    knock: (callback: (resp: Response) => void) => void;
 }
 
 interface SocketData {
