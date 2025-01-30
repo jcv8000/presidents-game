@@ -17,7 +17,7 @@
         "serve": "bun --bun --smol dist/server/index.js",
         "clean": "rimraf dist/",
         "test": "tsc && bunx eslint && bunx prettier . --check",
-        "prettier": "bunx prettier . --write"
+        "lint": "bunx prettier . --write"
     },
     "devDependencies": {
         "@types/bun": "^1.2.1",
