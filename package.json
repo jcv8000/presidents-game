@@ -7,12 +7,15 @@
     "private": "true",
     "type": "module",
     "scripts": {
-        "client:build": "bunx --bun vite build",
-        "client:dev": "bunx --bun vite",
         "server:dev": "bun --bun --watch --no-clear-screen server/index.ts",
+        "server:build": "bun build server/index.ts --outdir dist/server --target bun",
+        "client:dev": "bunx --bun vite",
+        "client:build": "bunx --bun vite build",
         "dev": "NODE_ENV='development' concurrently -n Server,Client -c yellow,green \"bun:server:dev\" \"bun:client:dev\"",
-        "serve": "bunx --bun vite build && bun --bun server/index.ts",
-        "clean": "rimraf .vite/",
+        "start": "bunx --bun vite build && bun --bun server/index.ts",
+        "build": "bun run server:build && bun run client:build",
+        "serve": "bun --bun --smol dist/server/index.js",
+        "clean": "rimraf dist/",
         "typecheck": "tsc"
     },
     "devDependencies": {

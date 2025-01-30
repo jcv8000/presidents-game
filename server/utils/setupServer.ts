@@ -15,8 +15,8 @@ export function setupServer() {
     } else {
         io = new TypedServer(httpServer);
 
-        app.use(express.static(".vite"));
-        app.use("/game/*code", express.static(".vite"));
+        app.use(express.static("dist/client"));
+        app.use("/game/*code", express.static("dist/client"));
     }
 
     httpServer.listen(VITE_SERVER_PORT, () => {
