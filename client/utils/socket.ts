@@ -5,11 +5,13 @@ let s: TypedClientSocket;
 
 if (import.meta.env.DEV) {
     s = io(`${import.meta.env.VITE_DEV_HOST}:${import.meta.env.VITE_SERVER_PORT}`, {
+        transports: ["polling"],
         autoConnect: false
     });
 } else {
     s = io({
         port: import.meta.env.VITE_SERVER_PORT,
+        transports: ["polling"],
         autoConnect: false
     });
 }
