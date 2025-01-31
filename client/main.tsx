@@ -12,7 +12,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <MantineProvider
-            theme={{ fontFamily: "Itim", primaryColor: "violet", scale: 1.5 }}
+            theme={{ fontFamily: "Itim", primaryColor: "violet", scale: 1.4 }}
             defaultColorScheme="dark"
         >
             <Notifications />
