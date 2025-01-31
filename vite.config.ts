@@ -6,7 +6,8 @@ import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
 export default defineConfig(() => {
-    const host = "192.168.1.125";
+    const host = "localhost";
+
     process.env.VITE_APP_VERSION = pkg.version;
     process.env.VITE_DEV_CLIENT_URL = `${host}:${process.env.VITE_SERVER_PORT}`;
 
@@ -16,7 +17,7 @@ export default defineConfig(() => {
             outDir: "dist/client"
         },
         server: {
-            host: "192.168.1.125"
+            host: host
         }
     };
 });
