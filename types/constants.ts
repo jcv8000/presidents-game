@@ -14,4 +14,4 @@ export const COOKIE_EXPIRATION = 1;
  */
 export const NAME_COOKIE_EXPIRATION = 365;
 
-export const ARTIFICIAL_CONNECT_DELAY = 200;
+export const ARTIFICIAL_CONNECT_DELAY = 150;
