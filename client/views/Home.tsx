@@ -52,7 +52,7 @@ export default function Home() {
     }
 
     return (
-        <Container fluid h="100vh">
+        <Container fluid h="100svh">
             <Center h="100%">
                 <Stack>
                     <TextInput

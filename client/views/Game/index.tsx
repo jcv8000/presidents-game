@@ -102,7 +102,7 @@ export default function Game() {
 
     if (!joinedGame)
         return (
-            <Container fluid h="100vh">
+            <Container fluid h="100svh">
                 <Overlay backgroundOpacity={0}>
                     <Center h="100%">
                         <Loader type="oval" />
@@ -112,7 +112,7 @@ export default function Game() {
         );
 
     return (
-        <Container fluid h="100vh" p={"lg"}>
+        <Container fluid h="100svh" p={"lg"}>
             {!connected && (
                 <Overlay backgroundOpacity={0.7}>
                     <Center h="100%">
