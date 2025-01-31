@@ -1,5 +1,5 @@
 // prettier-ignore
-import { Button, Center, Container, Divider, Fieldset, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Button, Center, Container, Divider, Fieldset, Stack, Text, TextInput } from "@mantine/core";
 
 import { getCookie, setCookie } from "@/utils/cookies";
 import { showErrorNotification } from "@/utils/notifications";
