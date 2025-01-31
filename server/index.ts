@@ -190,6 +190,15 @@ io.on("connection", (socket) => {
             return;
         }
 
+        // Check validity of cardIndexes string
+        const allowedChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ","];
+        for (let i = 0; i < cardIndexes.length; i++) {
+            if (!allowedChars.includes(cardIndexes[i])) {
+                callback({ success: false, error: "Bad card index list." });
+                return;
+            }
+        }
+
         //
         // LEGALITY CHECKING
         //
@@ -208,15 +217,17 @@ io.on("connection", (socket) => {
 
         // Get cards from supplied indexes
         const cards: Card[] = [];
-        const indexes = cardIndexes.split(",");
-        indexes.forEach((i) => {
-            const index = parseInt(i);
-            if (index < 0 || index > player.hand.length) {
-                callback({ success: false, error: "Bad card index." });
-                return;
-            }
-            cards.push(player.hand[parseInt(i)]);
-        });
+        if (cardIndexes != "") {
+            const indexes = cardIndexes.split(",");
+            indexes.forEach((i) => {
+                const index = parseInt(i);
+                if (index < 0 || index > player.hand.length) {
+                    callback({ success: false, error: "Bad card index." });
+                    return;
+                }
+                cards.push(player.hand[parseInt(i)]);
+            });
+        }
 
         if (game.currentCard.length > 0 && cards.length > 0 && cards[0].rank != "JOKER") {
             // Check if they're playing the right amount of cards
@@ -276,6 +287,8 @@ io.on("connection", (socket) => {
             });
         });
 
+        game.firstPlayOfRound = false;
+
         // Check if Joker
         if (cards.length > 0 && cards[0].rank == "JOKER") {
             game.firstPlayOfRound = false;
@@ -317,7 +330,7 @@ io.on("connection", (socket) => {
         if (cards.length > 0) {
             // Check for skip / wipe
             let skipping = false;
-            if (game.currentCard.length == 1 || game.currentCard.length == 2) {
+            if (game.currentCard.length == 1) {
                 // Single cards
                 if (cards[0].rank == game.currentCard[0].rank) {
                     skipping = true;
@@ -341,8 +354,14 @@ io.on("connection", (socket) => {
                     game.whosTurn =
                         game.stillHasCards[(index + game.skip + 1) % game.stillHasCards.length];
                 }
+            } else if (game.currentCard.length == 2) {
+                if (cards[0].rank == game.currentCard[0].rank) {
+                    wipe();
+                    sendGameUpdate();
+                    return;
+                }
             }
-            game.firstPlayOfRound = false;
+
             game.whoPlayedLastCard = player;
             game.currentCard = cards;
             if (!skipping) {
