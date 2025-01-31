@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
         if (game == undefined) {
             callback({
                 success: false,
-                error: "Game not found with this code: " + code.toUpperCase()
+                error: "Game room not found: " + code.toUpperCase()
             });
             return;
         }
@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
         const nameMatch = game.players.find((p) => p.name == name);
         if (nameMatch) {
             if (nameMatch.authToken != authToken) {
-                callback({ success: false, error: "That name is already taken in this room." });
+                callback({ success: false, error: "That name is already taken." });
                 return;
             }
         }
