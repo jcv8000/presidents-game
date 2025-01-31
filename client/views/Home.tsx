@@ -61,9 +61,10 @@ export default function Home() {
                                 variant="gradient"
                                 gradient={{ from: "indigo", to: "grape", deg: 360 }}
                                 fz="h1"
-                                fw={600}
+                                fw={900}
                                 mb={0}
                                 style={{ letterSpacing: "2px" }}
+                                ff="Cantata One"
                             >
                                 PRESIDENTS
                             </Text>
