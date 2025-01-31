@@ -1,5 +1,6 @@
 import { UUID_LENGTH } from "types/constants";
 import {
+    Card,
     CARD_VALUES,
     cardReferencesEquivalent,
     GameState,
@@ -8,6 +9,7 @@ import {
 } from "types/Game";
 import { generateRoomCode } from "./utils/generateRoomCode";
 import { setupServer } from "./utils/setupServer";
+import { sanitize } from "./utils/sanitize";
 
 const io = setupServer();
 const games = new Map<string, GameState>();
@@ -42,7 +44,8 @@ io.on("connection", (socket) => {
         callback({ success: true, code: code });
     });
 
-    socket.on("joinGame", ({ code, name, authToken }, callback) => {
+    socket.on("joinGame", (data, callback) => {
+        const { code, name, authToken } = sanitize(data);
         if (typeof authToken !== "string" || authToken.length != UUID_LENGTH) {
             callback({ success: false, error: "Bad auth token" });
             return;
@@ -112,8 +115,9 @@ io.on("connection", (socket) => {
         io.to(code).emit("gameStateUpdate", sanitizeGameState(game)); // includes sender
     });
 
-    socket.on("sendChat", ({ chat }, callback) => {
+    socket.on("sendChat", (data, callback) => {
         const { authToken, roomCode } = socket.data;
+        const { chat } = sanitize(data);
 
         const game = games.get(roomCode);
         if (game == undefined) {
@@ -170,7 +174,8 @@ io.on("connection", (socket) => {
     });
 
     // TODO this all needs re-written to account for knocking, if it reaches around to the player that played the last card, etc.
-    socket.on("playCards", ({ cards }, callback) => {
+    socket.on("playCards", (data, callback) => {
+        const { cardIndexes } = sanitize(data);
         const { authToken, roomCode } = socket.data;
 
         const game = games.get(roomCode);
@@ -189,23 +194,29 @@ io.on("connection", (socket) => {
         // LEGALITY CHECKING
         //
 
+        // Check if they're already out of cards
+        if (player.hand.length == 0) {
+            callback({ success: false, error: "You're already out of cards." });
+            return;
+        }
+
         // Check if it's actually their turn
         if (game.whosTurn!.authToken != authToken) {
             callback({ success: false, error: "It's not your turn to play." });
             return;
         }
 
-        // Check if they have the cards they're trying to play
-        for (let i = 0; i < cards.length; i++) {
-            const card = cards[i];
-            if (!player.hand.some((c) => c.suit == card.suit && c.rank == card.rank)) {
-                callback({
-                    success: false,
-                    error: "You do not have the card(s) you are trying to play."
-                });
+        // Get cards from supplied indexes
+        const cards: Card[] = [];
+        const indexes = cardIndexes.split(",");
+        indexes.forEach((i) => {
+            const index = parseInt(i);
+            if (index < 0 || index > player.hand.length) {
+                callback({ success: false, error: "Bad card index." });
                 return;
             }
-        }
+            cards.push(player.hand[parseInt(i)]);
+        });
 
         if (game.currentCard.length > 0 && cards.length > 0 && cards[0].rank != "JOKER") {
             // Check if they're playing the right amount of cards

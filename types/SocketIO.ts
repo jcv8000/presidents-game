@@ -1,5 +1,5 @@
 import { Socket as ClientSocket } from "socket.io-client";
-import { SanitizedGameState, Card } from "types/Game";
+import { SanitizedGameState } from "types/Game";
 import { Server, Socket as ServerSocket } from "socket.io";
 
 interface ServerToClientEvents {
@@ -24,7 +24,8 @@ interface ClientToServerEvents {
 
     startGame: (callback: (resp: Response) => void) => void;
 
-    playCards: (data: { cards: Card[] }, callback: (resp: Response) => void) => void;
+    /** @param cardIndexes Numbers separated by commas. Example: "0,3,7" */
+    playCards: (data: { cardIndexes: string }, callback: (resp: Response) => void) => void;
 }
 
 interface SocketData {

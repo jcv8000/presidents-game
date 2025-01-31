@@ -1,6 +1,6 @@
 import { showErrorNotification } from "@/utils/notifications";
 import { store } from "@/utils/store";
-import { Card, CARD_VALUES, CARD_RANK } from "types/Game";
+import { Card, CARD_VALUES, CARD_RANK, cardReferencesEquivalent } from "types/Game";
 import { TypedClientSocket } from "types/SocketIO";
 import { useSnapshot } from "valtio";
 
@@ -42,7 +42,7 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
             {context.gameState.currentCard.length > 0 && (
                 <h1>
                     Current card:{" "}
-                    {context.gameState.currentCard[0].rank.repeat(
+                    {(context.gameState.currentCard[0].rank + " ").repeat(
                         context.gameState.currentCard.length
                     )}
                 </h1>
@@ -61,7 +61,7 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                             style={{ marginBottom: 8 }}
                             onClick={() => {
                                 // Knock
-                                socket.emit("playCards", { cards: [] }, ({ error }) => {
+                                socket.emit("playCards", { cardIndexes: "" }, ({ error }) => {
                                     if (error) showErrorNotification({ message: error });
                                 });
                             }}
@@ -74,9 +74,20 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                         <div style={{ marginBottom: 8 }} key={index}>
                             <button
                                 onClick={() => {
-                                    socket.emit("playCards", { cards: play }, ({ error }) => {
-                                        if (error) console.log(error);
+                                    const indexes: number[] = [];
+                                    play.forEach((card) => {
+                                        const index = my.hand.findIndex((v) =>
+                                            cardReferencesEquivalent(card, v)
+                                        );
+                                        indexes.push(index);
                                     });
+                                    socket.emit(
+                                        "playCards",
+                                        { cardIndexes: indexes.join(",") },
+                                        ({ error }) => {
+                                            if (error) console.log(error);
+                                        }
+                                    );
                                 }}
                             >
                                 {playButtonText(play)}
