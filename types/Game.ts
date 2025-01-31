@@ -122,51 +122,6 @@ export class GameState {
         this.whoPlayedLastCard = null;
         this.firstPlayOfRound = true;
     }
-
-    // /**
-    //  * Assumes the server already checked the player's auth,
-    //  * and the play is completely legal.
-    //  * Server does all validity checking, this does all logic.
-    //  * @param cards Playing no cards [] is knocking.
-    //  */
-    // playCards(player: Player, cards: Card[]) {
-    //     const wipe = () => {
-    //         this.skipped = 0;
-    //         this.whoPlayedLastCard = null;
-    //         this.sameCardsPlayed = 0;
-    //         this.currentCard = [];
-    //     };
-
-    //     // remove cards from player's hand
-    //     cards.forEach((c) => {
-    //         player.hand.forEach((handCard) => {
-    //             if (cardReferencesEquivalent(c, handCard)) {
-    //                 player.hand.splice(player.hand.indexOf(handCard), 1);
-    //             }
-    //         });
-    //     });
-
-    //     // check if joker
-    //     if (cards.length > 0 && cards[0].rank == "JOKER") {
-    //         wipe();
-    //         return;
-    //     }
-
-    //     // Check if player is out of cards
-    //     if (player.hand.length == 0) {
-    //         wipe();
-
-    //         const index = this.stillHasCards.indexOf(player);
-    //         this.whosTurn = this.stillHasCards[(index + 1) % this.stillHasCards.length];
-    //         this.stillHasCards.splice(index, 1);
-
-    //     }
-
-    //     // Wipe? (4th card of rank played in a row)
-    //     // Skipping?
-    //     // finish
-    //     // Check if next player is the one who played the last card
-    // }
 }
 
 /* TODO in socket events, send out fully sanitized gameState to all OTHER players,

@@ -129,14 +129,16 @@ function getPossiblePlays(hand: Card[], currentCard: Card[], firstPlayOfRound: b
 
     // add multi-card plays
     map.forEach((cards) => {
-        if (cards.length >= 2) {
-            plays.push([cards[0], cards[1]]);
-        }
-        if (cards.length >= 3) {
-            plays.push([cards[0], cards[1], cards[2]]);
-        }
-        if (cards.length >= 4) {
-            plays.push([cards[0], cards[1], cards[2], cards[3]]);
+        if (cards[0].rank != "JOKER") {
+            if (cards.length >= 2) {
+                plays.push([cards[0], cards[1]]);
+            }
+            if (cards.length >= 3) {
+                plays.push([cards[0], cards[1], cards[2]]);
+            }
+            if (cards.length >= 4) {
+                plays.push([cards[0], cards[1], cards[2], cards[3]]);
+            }
         }
     });
 

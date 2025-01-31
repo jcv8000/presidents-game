@@ -207,7 +207,7 @@ io.on("connection", (socket) => {
             }
         }
 
-        if (game.currentCard.length > 0 && cards.length > 0) {
+        if (game.currentCard.length > 0 && cards.length > 0 && cards[0].rank != "JOKER") {
             // Check if they're playing the right amount of cards
             if (cards.length != game.currentCard.length) {
                 callback({ success: false, error: "Didn't play the right amount of cards." });
@@ -275,22 +275,27 @@ io.on("connection", (socket) => {
 
         // Check if player is out of cards
         if (player.hand.length == 0) {
-            game.firstPlayOfRound = false;
-            wipe();
-            goNextPlayer({ removeCurrentPlayer: true });
-
-            if (game.president == null) {
-                game.president = player;
-                sendNotification(`${player.name} is the President.`);
-            } else if (game.vicePresident == null) {
-                game.vicePresident = player;
-                sendNotification(`${player.name} is the VP.`);
-            } else if (game.secondToLast == null) {
-                game.secondToLast = player;
-                sendNotification(`${player.name} got 2nd to last.`);
-            } else if (game.loser == null) {
+            if (game.stillHasCards.length == 1) {
+                // GAME IS OVER!!!
                 game.loser = player;
                 sendNotification(`${player.name} lost the round.`);
+
+                game.stage = "ended";
+            } else {
+                game.firstPlayOfRound = false;
+                wipe();
+                goNextPlayer({ removeCurrentPlayer: true });
+
+                if (game.president == null) {
+                    game.president = player;
+                    sendNotification(`${player.name} is the President.`);
+                } else if (game.vicePresident == null) {
+                    game.vicePresident = player;
+                    sendNotification(`${player.name} is the VP.`);
+                } else if (game.secondToLast == null) {
+                    game.secondToLast = player;
+                    sendNotification(`${player.name} got 2nd to last.`);
+                }
             }
 
             sendGameUpdate();
