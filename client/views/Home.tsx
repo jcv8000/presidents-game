@@ -1,5 +1,5 @@
 // prettier-ignore
-import { Button, Center, Container, Divider, Fieldset, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Center, Container, Divider, Fieldset, Stack, Text, TextInput, Title } from "@mantine/core";
 
 import { getCookie, setCookie } from "@/utils/cookies";
 import { showErrorNotification } from "@/utils/notifications";
@@ -54,7 +54,27 @@ export default function Home() {
     return (
         <Container fluid h="100svh">
             <Center h="100%">
-                <Stack>
+                <Stack gap="xs">
+                    <div>
+                        <Center>
+                            <Text
+                                variant="gradient"
+                                gradient={{ from: "indigo", to: "grape", deg: 360 }}
+                                fz="h1"
+                                fw={600}
+                                mb={0}
+                                style={{ letterSpacing: "2px" }}
+                            >
+                                PRESIDENTS
+                            </Text>
+                        </Center>
+                        <Center>
+                            <Text size="xs" c="dimmed">
+                                Online Card Game
+                            </Text>
+                        </Center>
+                    </div>
+
                     <TextInput
                         autoFocus
                         w="100%"
@@ -65,7 +85,7 @@ export default function Home() {
                         disabled={formDisabled}
                     />
 
-                    <Divider size="md" />
+                    <Divider size="sm" />
 
                     <Fieldset variant="filled" disabled={formDisabled}>
                         <TextInput
@@ -91,7 +111,7 @@ export default function Home() {
                         </Button>
                     </Fieldset>
 
-                    <Divider variant="dashed" size="md" label="OR" labelPosition="center" />
+                    <Divider variant="dashed" size="sm" label="OR" labelPosition="center" />
 
                     <Fieldset py="md" variant="filled" disabled={formDisabled}>
                         <Center>
@@ -108,9 +128,9 @@ export default function Home() {
                             </Button>
                         </Center>
                     </Fieldset>
-                    <Text size="xs" c="dimmed" ta="center">
+                    {/* <Text size="xs" c="dimmed" ta="center">
                         Version {import.meta.env.VITE_APP_VERSION}
-                    </Text>
+                    </Text> */}
                 </Stack>
             </Center>
         </Container>
