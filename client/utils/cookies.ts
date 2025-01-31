@@ -12,3 +12,5 @@ export function setCookie(cookie: Cookie, value: string) {
         expires: cookie == "name" ? NAME_COOKIE_EXPIRATION : COOKIE_EXPIRATION
     });
 }
+
+// TODO same-site origin cookies
