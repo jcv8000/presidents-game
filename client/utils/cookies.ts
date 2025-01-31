@@ -9,8 +9,7 @@ export function getCookie(cookie: Cookie) {
 
 export function setCookie(cookie: Cookie, value: string) {
     Cookies.set(cookie, value, {
-        expires: cookie == "name" ? NAME_COOKIE_EXPIRATION : COOKIE_EXPIRATION
+        expires: cookie == "name" ? NAME_COOKIE_EXPIRATION : COOKIE_EXPIRATION,
+        sameSite: "Strict"
     });
 }
-
-// TODO same-site origin cookies
