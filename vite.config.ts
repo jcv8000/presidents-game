@@ -6,10 +6,7 @@ import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
 export default defineConfig(() => {
-    const host = "localhost";
-
     process.env.VITE_APP_VERSION = pkg.version;
-    process.env.VITE_DEV_CLIENT_URL = `${host}:${process.env.VITE_SERVER_PORT}`;
 
     return {
         plugins: [paths(), react(), VitePWA({ manifest: { theme_color: "#6741d9" } })],
@@ -17,7 +14,7 @@ export default defineConfig(() => {
             outDir: "dist/client"
         },
         server: {
-            host: host
+            host: import.meta.env.VITE_DEV_HOST
         }
     };
 });

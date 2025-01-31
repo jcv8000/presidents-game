@@ -4,7 +4,7 @@
 interface MyEnv {
     VITE_SERVER_PORT: string;
     VITE_APP_VERSION: string;
-    VITE_DEV_CLIENT_URL: string;
+    VITE_DEV_HOST: string;
 }
 
 interface ImportMetaEnv extends Readonly<MyEnv> {}
