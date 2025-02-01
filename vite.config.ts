@@ -39,7 +39,9 @@ export default defineConfig(() => {
             outDir: "dist/client"
         },
         server: {
-            host: import.meta.env.VITE_DEV_HOST
+            host: import.meta.env.VITE_DEV_HOST,
+            port: 5173,
+            strictPort: true
         }
     };
 });
