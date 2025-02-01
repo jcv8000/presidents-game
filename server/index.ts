@@ -1,6 +1,7 @@
-import { UUID_LENGTH } from "types/constants";
+import { ROOM_SIZE_LIMIT, UUID_LENGTH } from "types/constants";
 import {
     Card,
+    CARD_RANK,
     CARD_VALUES,
     cardReferencesEquivalent,
     GameState,
@@ -95,6 +96,12 @@ io.on("connection", (socket) => {
             authMatch.connected = true;
         } else {
             // New player connection
+
+            if (game.players.length >= ROOM_SIZE_LIMIT) {
+                callback({ success: false, error: "Game is full." });
+                return;
+            }
+
             if (game.stage == "lobby") {
                 const player = new Player(name, authToken);
                 game.players.push(player);
@@ -128,6 +135,16 @@ io.on("connection", (socket) => {
         const player = game.players.find((p) => p.authToken == authToken);
         if (player == undefined) {
             callback({ success: false, error: "Player is not in this room." });
+            return;
+        }
+
+        if (game.players.length < 2) {
+            callback({ success: false, error: "Not enough players." });
+            return;
+        }
+
+        if (game.players.length > ROOM_SIZE_LIMIT) {
+            callback({ success: false, error: "Too many players." });
             return;
         }
 
@@ -228,6 +245,13 @@ io.on("connection", (socket) => {
                 cards.push(player.hand[parseInt(i)]);
             });
         }
+        for (let i = 1; i < cards.length; i++) {
+            const [c1, c2] = [cards[i - 1], cards[i]];
+            if (c1.rank != c2.rank) {
+                callback({ success: false, error: "Tried to play different card ranks." });
+                return;
+            }
+        }
 
         if (game.currentCard.length > 0 && cards.length > 0 && cards[0].rank != "JOKER") {
             // Check if they're playing the right amount of cards
@@ -289,14 +313,6 @@ io.on("connection", (socket) => {
 
         game.firstPlayOfRound = false;
 
-        // Check if Joker
-        if (cards.length > 0 && cards[0].rank == "JOKER") {
-            game.firstPlayOfRound = false;
-            wipe();
-            sendGameUpdate();
-            return;
-        }
-
         // Check if player is out of cards
         if (player.hand.length == 0) {
             if (game.stillHasCards.length == 1) {
@@ -306,7 +322,6 @@ io.on("connection", (socket) => {
 
                 game.stage = "ended";
             } else {
-                game.firstPlayOfRound = false;
                 wipe();
                 goNextPlayer({ removeCurrentPlayer: true });
 
@@ -326,6 +341,21 @@ io.on("connection", (socket) => {
             return;
         }
 
+        // Check if Joker
+        if (cards.length > 0 && cards[0].rank == "JOKER") {
+            wipe();
+            sendGameUpdate();
+            return;
+        }
+
+        // Check if playing all 4 cards of rank
+        if (game.currentCard.length == 0 && cards.length == 4) {
+            // WIPE
+            wipe();
+            sendGameUpdate();
+            return;
+        }
+
         // Regular play
         if (cards.length > 0) {
             // Check for skip / wipe
@@ -337,7 +367,6 @@ io.on("connection", (socket) => {
                     game.skip++;
                     if (game.skip == 3) {
                         // WIPE
-                        game.firstPlayOfRound = false;
                         wipe();
                         sendGameUpdate();
                         return;
