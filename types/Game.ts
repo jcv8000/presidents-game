@@ -73,7 +73,7 @@ export type DeckStyle = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const DeckStyleNames = ["Default", "Dark", "Gambit", "Kobe"] as const;
+const DeckStyleNames = ["Default", "Dark", "Gambit", "Kobe", "Libby"] as const;
 export type DeckStyleName = (typeof DeckStyleNames)[number];
 export const DECK_STYLES: Record<(typeof DeckStyleNames)[number], DeckStyle> = {
     Default: {
@@ -99,6 +99,13 @@ export const DECK_STYLES: Record<(typeof DeckStyleNames)[number], DeckStyle> = {
         black: "white",
         bgImageUrl: "/img/kobe.jpg",
         textShadow: "2px 2px rgba(0, 0, 0, 0.5)"
+    },
+    Libby: {
+        bg: "black",
+        red: "red",
+        black: "black",
+        bgImageUrl: "/img/libby.jpg",
+        textShadow: "2px 2px rgba(0, 0, 0, 0.1)"
     }
 };
 
