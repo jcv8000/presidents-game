@@ -136,26 +136,26 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
 
             game.stage = "ended";
         } else {
-            wipe();
-            goNextPlayer({ removeCurrentPlayer: true });
-
             if (game.players.length > 4) {
-                if (game.president == null) {
+                if (game.stillHasCards.length == game.players.length) {
                     game.president = player;
                     sendNotification(`${player.name} is the President.`);
-                } else if (game.vicePresident == null) {
+                } else if (game.stillHasCards.length == game.players.length - 1) {
                     game.vicePresident = player;
                     sendNotification(`${player.name} is the VP.`);
-                } else if (game.secondToLast == null) {
+                } else if (game.stillHasCards.length == 2) {
                     game.secondToLast = player;
                     sendNotification(`${player.name} got 2nd to last.`);
                 }
             } else {
-                if (game.president == null) {
+                if (game.stillHasCards.length == game.players.length) {
                     game.president = player;
                     sendNotification(`${player.name} is the President.`);
                 }
             }
+
+            wipe();
+            goNextPlayer({ removeCurrentPlayer: true });
         }
 
         sendGameUpdate();
