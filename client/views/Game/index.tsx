@@ -125,10 +125,7 @@ export default function Game() {
             )}
 
             <Group justify="space-between" p="md">
-                <div
-                    className={classes.code}
-                    onClick={() => clipboard.copy(`${import.meta.env.VITE_JOIN_LINK_BASE}${code}`)}
-                >
+                <div className={classes.code} onClick={() => clipboard.copy(window.location.href)}>
                     {clipboard.copied ? "Link Copied!" : `[ ${code?.toUpperCase()} ]`}
                 </div>
                 <Button size="xs" onClick={() => navigate("/")}>
