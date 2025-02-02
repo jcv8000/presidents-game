@@ -1,0 +1,22 @@
+.presidentsCard {
+    width: 76px;
+    position: relative;
+
+    border-radius: var(--mantine-radius-sm);
+
+    padding: var(--mantine-spacing-md);
+
+    font-size: 48px;
+    user-select: none;
+
+    box-shadow: var(--mantine-shadow-lg);
+
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.suit {
+    position: absolute;
+    display: inline;
+    font-size: var(--mantine-font-size-md);
+}

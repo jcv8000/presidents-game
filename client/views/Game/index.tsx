@@ -1,6 +1,7 @@
-// prettier-ignore
-import { Center, Container, Loader, Overlay } from "@mantine/core";
+import classes from "./index.module.css";
 
+// prettier-ignore
+import { Button, Center, Container, Group, Loader, Overlay } from "@mantine/core";
 import { getCookie, setCookie } from "@/utils/cookies";
 import { showErrorNotification, showGameNotification } from "@/utils/notifications";
 import { socket } from "@/utils/socket";
@@ -13,6 +14,7 @@ import { v4 as uuid } from "uuid";
 import { useSnapshot } from "valtio";
 import Lobby from "./Lobby";
 import Presidents from "./Presidents";
+import { useClipboard } from "@mantine/hooks";
 
 export default function Game() {
     const { code } = useParams();
@@ -23,6 +25,7 @@ export default function Game() {
     const [connected, setConnected] = useState(false);
 
     const viewport = useRef<HTMLDivElement>(null);
+    const clipboard = useClipboard({ timeout: 2000 });
 
     useEffect(() => {
         if (!code) return;
@@ -112,7 +115,7 @@ export default function Game() {
         );
 
     return (
-        <Container fluid h="100svh" p={"lg"}>
+        <>
             {!connected && (
                 <Overlay backgroundOpacity={0.7}>
                     <Center h="100%">
@@ -120,10 +123,18 @@ export default function Game() {
                     </Center>
                 </Overlay>
             )}
-            <div>Game Code: {context.code.toUpperCase()}</div>
-            <div>
-                <button onClick={() => navigate("/")}>Leave Game</button>
-            </div>
+
+            <Group justify="space-between" p="md">
+                <div
+                    className={classes.code}
+                    onClick={() => clipboard.copy(`${import.meta.env.VITE_JOIN_LINK_BASE}${code}`)}
+                >
+                    {clipboard.copied ? "Link Copied!" : `[ ${code?.toUpperCase()} ]`}
+                </div>
+                <Button size="xs" onClick={() => navigate("/")}>
+                    Leave
+                </Button>
+            </Group>
 
             {context.gameState.stage == "lobby" && <Lobby socket={socket} />}
             {context.gameState.stage == "in-game" && <Presidents socket={socket} />}
@@ -132,6 +143,6 @@ export default function Game() {
                     <h1>Game over.</h1>
                 </Center>
             )}
-        </Container>
+        </>
     );
 }

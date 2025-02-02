@@ -1,0 +1,12 @@
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: var(--mantine-spacing-md);
+}
+
+.playerDisconnected {
+    color: var(--mantine-color-red-4);
+    text-decoration: line-through;
+}

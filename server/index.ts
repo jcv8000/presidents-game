@@ -1,13 +1,6 @@
+// prettier-ignore
+import { Card, CARD_VALUES, cardReferencesEquivalent, DECK_STYLES, GameState, Player, sanitizeGameState } from "types/Game";
 import { ROOM_SIZE_LIMIT, UUID_LENGTH } from "types/constants";
-import {
-    Card,
-    CARD_RANK,
-    CARD_VALUES,
-    cardReferencesEquivalent,
-    GameState,
-    Player,
-    sanitizeGameState
-} from "types/Game";
 import { generateRoomCode } from "./utils/generateRoomCode";
 import { setupServer } from "./utils/setupServer";
 import { sanitize } from "./utils/sanitize";
@@ -154,7 +147,8 @@ io.on("connection", (socket) => {
         callback({ success: true });
     });
 
-    socket.on("startGame", (callback) => {
+    socket.on("startGame", (data, callback) => {
+        const { deckStyle } = sanitize(data);
         const { authToken, roomCode } = socket.data;
 
         const game = games.get(roomCode);
@@ -175,6 +169,7 @@ io.on("connection", (socket) => {
         }
 
         if (game.stage == "lobby") {
+            game.deckStyle = DECK_STYLES[deckStyle];
             game.stage = "in-game";
             game.chat.push({ message: `Game is starting`, color: "green" });
 
@@ -190,7 +185,6 @@ io.on("connection", (socket) => {
         }
     });
 
-    // TODO this all needs re-written to account for knocking, if it reaches around to the player that played the last card, etc.
     socket.on("playCards", (data, callback) => {
         const { cardIndexes } = sanitize(data);
         const { authToken, roomCode } = socket.data;
@@ -325,15 +319,22 @@ io.on("connection", (socket) => {
                 wipe();
                 goNextPlayer({ removeCurrentPlayer: true });
 
-                if (game.president == null) {
-                    game.president = player;
-                    sendNotification(`${player.name} is the President.`);
-                } else if (game.vicePresident == null) {
-                    game.vicePresident = player;
-                    sendNotification(`${player.name} is the VP.`);
-                } else if (game.secondToLast == null) {
-                    game.secondToLast = player;
-                    sendNotification(`${player.name} got 2nd to last.`);
+                if (game.players.length > 4) {
+                    if (game.president == null) {
+                        game.president = player;
+                        sendNotification(`${player.name} is the President.`);
+                    } else if (game.vicePresident == null) {
+                        game.vicePresident = player;
+                        sendNotification(`${player.name} is the VP.`);
+                    } else if (game.secondToLast == null) {
+                        game.secondToLast = player;
+                        sendNotification(`${player.name} got 2nd to last.`);
+                    }
+                } else {
+                    if (game.president == null) {
+                        game.president = player;
+                        sendNotification(`${player.name} is the President.`);
+                    }
                 }
             }
 

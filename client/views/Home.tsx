@@ -1,5 +1,5 @@
 // prettier-ignore
-import { Button, Center, Container, Divider, Fieldset, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Center, Divider, Fieldset, Stack, Text, TextInput } from "@mantine/core";
 
 import { getCookie, setCookie } from "@/utils/cookies";
 import { showErrorNotification } from "@/utils/notifications";
@@ -52,87 +52,85 @@ export default function Home() {
     }
 
     return (
-        <Container fluid h="100svh">
-            <Center h="100%">
-                <Stack gap="xs">
-                    <div>
-                        <Center>
-                            <Text
-                                variant="gradient"
-                                gradient={{ from: "indigo", to: "grape", deg: 360 }}
-                                fz="h1"
-                                mb={0}
-                                ff="Cantata One"
-                                style={{ userSelect: "none" }}
-                            >
-                                PRESIDENTS
-                            </Text>
-                        </Center>
-                        <Center>
-                            <Text size="xs" c="dimmed">
-                                Online Card Game
-                            </Text>
-                        </Center>
-                    </div>
+        <Center h="100svh">
+            <Stack gap="xs">
+                <div>
+                    <Center>
+                        <Text
+                            variant="gradient"
+                            gradient={{ from: "indigo", to: "grape", deg: 360 }}
+                            fz="h1"
+                            mb={0}
+                            ff="Cantata One"
+                            style={{ userSelect: "none" }}
+                        >
+                            PRESIDENTS
+                        </Text>
+                    </Center>
+                    <Center>
+                        <Text size="xs" c="dimmed">
+                            Online Card Game
+                        </Text>
+                    </Center>
+                </div>
 
+                <TextInput
+                    autoFocus
+                    w="100%"
+                    label="Name"
+                    error={nameError}
+                    value={name}
+                    onChange={(e) => setName(e.currentTarget.value)}
+                    disabled={formDisabled}
+                />
+
+                <Divider size="sm" />
+
+                <Fieldset variant="filled" disabled={formDisabled}>
                     <TextInput
-                        autoFocus
-                        w="100%"
-                        label="Name"
-                        error={nameError}
-                        value={name}
-                        onChange={(e) => setName(e.currentTarget.value)}
-                        disabled={formDisabled}
+                        mb="md"
+                        label="Room Code"
+                        maxLength={ROOM_CODE_SIZE}
+                        error={codeError}
+                        value={code}
+                        onChange={(e) => setCode(e.currentTarget.value.toUpperCase())}
                     />
+                    <Button
+                        fullWidth
+                        onClick={() => {
+                            code == "" ? setCodeError("Enter a room code.") : setCodeError("");
+                            name == "" ? setNameError("Enter a name.") : setNameError("");
 
-                    <Divider size="sm" />
+                            if (code != "" && name != "") {
+                                joinGame(name, code);
+                            }
+                        }}
+                    >
+                        Join Game
+                    </Button>
+                </Fieldset>
 
-                    <Fieldset variant="filled" disabled={formDisabled}>
-                        <TextInput
-                            mb="md"
-                            label="Room Code"
-                            maxLength={ROOM_CODE_SIZE}
-                            error={codeError}
-                            value={code}
-                            onChange={(e) => setCode(e.currentTarget.value.toUpperCase())}
-                        />
+                <Divider variant="dashed" size="sm" label="OR" labelPosition="center" />
+
+                <Fieldset py="md" variant="filled" disabled={formDisabled}>
+                    <Center>
                         <Button
                             fullWidth
                             onClick={() => {
-                                code == "" ? setCodeError("Enter a room code.") : setCodeError("");
-                                name == "" ? setNameError("Enter a name.") : setNameError("");
-
-                                if (code != "" && name != "") {
-                                    joinGame(name, code);
-                                }
+                                if (name != "") {
+                                    setNameError("");
+                                    createNewGame(name);
+                                } else setNameError("Enter a name.");
                             }}
                         >
-                            Join Game
+                            Create New Game
                         </Button>
-                    </Fieldset>
-
-                    <Divider variant="dashed" size="sm" label="OR" labelPosition="center" />
-
-                    <Fieldset py="md" variant="filled" disabled={formDisabled}>
-                        <Center>
-                            <Button
-                                fullWidth
-                                onClick={() => {
-                                    if (name != "") {
-                                        setNameError("");
-                                        createNewGame(name);
-                                    } else setNameError("Enter a name.");
-                                }}
-                            >
-                                Create New Game
-                            </Button>
-                        </Center>
-                    </Fieldset>
-                    {/* <Text size="xs" c="dimmed" ta="center">
+                    </Center>
+                </Fieldset>
+                {/* <Text size="xs" c="dimmed" ta="center">
                         Version {import.meta.env.VITE_APP_VERSION}
                     </Text> */}
-                </Stack>
-            </Center>
-        </Container>
+            </Stack>
+        </Center>
     );
 }
