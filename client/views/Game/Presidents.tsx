@@ -8,6 +8,7 @@ import { Card, CARD_VALUES, CARD_RANK, cardReferencesEquivalent } from "types/Ga
 import { TypedClientSocket } from "types/SocketIO";
 import { useSnapshot } from "valtio";
 import { CardsDisplay } from "./CardDisplay";
+import { JSX } from "react";
 
 export default function Presidents(props: { socket: TypedClientSocket }) {
     const { socket } = props;
@@ -245,11 +246,11 @@ function playButtonText(play: Card[]) {
     const card = play[0];
     if (card.rank == "JOKER") return <>JOKER</>;
 
-    let suit = "";
-    if (card.suit == "CLUBS") suit = "♣";
-    if (card.suit == "DIAMONDS") suit = "♦";
-    if (card.suit == "HEARTS") suit = "♥";
-    if (card.suit == "SPADES") suit = "♠";
+    let suit: JSX.Element = <></>;
+    if (card.suit == "CLUBS") suit = <>♣&#xFE0E;</>;
+    if (card.suit == "DIAMONDS") suit = <>♦&#xFE0E;</>;
+    if (card.suit == "HEARTS") suit = <>♥&#xFE0E;</>;
+    if (card.suit == "SPADES") suit = <>♠&#xFE0E;</>;
 
     switch (play.length) {
         case 1:
