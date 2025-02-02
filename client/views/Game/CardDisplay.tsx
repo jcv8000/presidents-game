@@ -15,6 +15,8 @@ export function CardsDisplay(props: { cards: Card[]; deckStyle: DeckStyle }) {
                 if (c.suit == "HEARTS") [suit, color] = [<>♥&#xFE0E;</>, deckStyle.red];
                 if (c.suit == "SPADES") [suit, color] = [<>♠&#xFE0E;</>, deckStyle.black];
 
+                const showSuit = deckStyle.showSuit == undefined ? true : deckStyle.showSuit;
+
                 return (
                     <>
                         <span
@@ -29,7 +31,14 @@ export function CardsDisplay(props: { cards: Card[]; deckStyle: DeckStyle }) {
                                 textShadow: deckStyle.textShadow
                             }}
                         >
-                            <Center>{suit}</Center>
+                            <Center
+                                style={{
+                                    color: showSuit ? "" : "transparent",
+                                    textShadow: showSuit ? deckStyle.textShadow || "none" : "none"
+                                }}
+                            >
+                                {suit}
+                            </Center>
 
                             <span className={classes.suit} style={{ top: 0, left: "7px" }}>
                                 {c.rank}
