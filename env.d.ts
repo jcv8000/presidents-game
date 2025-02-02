@@ -2,7 +2,6 @@
 /// <reference types="vite/client" />
 
 interface MyEnv {
-    VITE_APP_VERSION: string;
     VITE_SERVER_PORT: string;
     VITE_DEV_HOST: string;
 }

@@ -8,6 +8,8 @@ import { sanitize } from "./utils/sanitize";
 const io = setupServer();
 const games = new Map<string, GameState>();
 
+// TODO enforce an api version to connect sockets to make sure client is up to date
+
 io.on("connection", (socket) => {
     socket.on("disconnecting", () => {
         const { roomCode, authToken } = socket.data;
