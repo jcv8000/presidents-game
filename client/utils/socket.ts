@@ -10,7 +10,7 @@ if (import.meta.env.DEV) {
     });
 } else {
     s = io({
-        port: import.meta.env.VITE_SERVER_PORT,
+        // port: import.meta.env.VITE_SERVER_PORT,
         transports: ["polling"],
         autoConnect: false
     });
