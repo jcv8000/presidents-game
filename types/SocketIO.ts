@@ -2,7 +2,7 @@ import { Socket as ClientSocket } from "socket.io-client";
 import { DeckStyleName, SanitizedGameState } from "types/Game";
 import { Server, Socket as ServerSocket } from "socket.io";
 
-interface ServerToClientEvents {
+export interface ServerToClientEvents {
     gameStateUpdate: (state: SanitizedGameState) => void;
     notification: (message: string) => void;
 }
@@ -12,7 +12,7 @@ type Response = {
     error?: string;
 };
 
-interface ClientToServerEvents {
+export interface ClientToServerEvents {
     createNewGame: (callback: (resp: Response & { code?: string }) => void) => void;
 
     joinGame: (
@@ -20,7 +20,7 @@ interface ClientToServerEvents {
         callback: (resp: Response) => void
     ) => void;
 
-    sendChat: (resp: { chat: string }, callback: (resp: Response) => void) => void;
+    sendChat: (data: { chat: string }, callback: (resp: Response) => void) => void;
 
     startGame: (data: { deckStyle: DeckStyleName }, callback: (resp: Response) => void) => void;
 
