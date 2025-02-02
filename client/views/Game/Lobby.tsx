@@ -26,6 +26,7 @@ export default function Lobby(props: { socket: TypedClientSocket }) {
         <>
             <Modal title="Choose Deck Style" opened={modalOpened} onClose={close} centered>
                 <Select
+                    allowDeselect={false}
                     data={Object.keys(DECK_STYLES)}
                     value={deckStyleName}
                     onChange={(v) => setDeckStyleName(v as DeckStyleName)}
