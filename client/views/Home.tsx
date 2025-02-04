@@ -7,13 +7,13 @@ import { socket } from "@/utils/socket";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { ROOM_CODE_SIZE } from "types/constants";
-import { IconHash, IconPlayerPlay, IconPlus, IconUser } from "@tabler/icons-react";
+import { NAME_MAX_LENGTH, ROOM_CODE_SIZE } from "types/constants";
+import { IconHash, IconUser } from "@tabler/icons-react";
 
 export default function Home() {
     const [code, setCode] = useState(getCookie("code")?.toUpperCase() || "");
     const [codeError, setCodeError] = useState("");
-    const [name, setName] = useState(getCookie("name") || "");
+    const [name, setName] = useState(getCookie("name")?.substring(0, NAME_MAX_LENGTH) || "");
     const [nameError, setNameError] = useState("");
     const [formDisabled, setFormDisabled] = useState(false);
     const navigate = useNavigate();
@@ -79,6 +79,7 @@ export default function Home() {
                     autoFocus
                     w="100%"
                     label="Name"
+                    maxLength={NAME_MAX_LENGTH}
                     error={nameError}
                     value={name}
                     onChange={(e) => setName(e.currentTarget.value)}

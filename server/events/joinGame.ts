@@ -1,7 +1,7 @@
 import { ClientToServerEvents, TypedServerSocket } from "types/SocketIO";
 import { sanitize } from "../utils/sanitize";
 import { games, io } from "..";
-import { ROOM_SIZE_LIMIT, UUID_LENGTH } from "types/constants";
+import { NAME_MAX_LENGTH, ROOM_SIZE_LIMIT, UUID_LENGTH } from "types/constants";
 import { Player, sanitizeGameState } from "types/Game";
 
 type Args = Parameters<ClientToServerEvents["joinGame"]>;
@@ -10,6 +10,15 @@ export function onJoinGame(socket: TypedServerSocket, [data, callback]: Args) {
     const { code, name, authToken } = sanitize(data);
     if (typeof authToken !== "string" || authToken.length != UUID_LENGTH) {
         callback({ success: false, error: "Bad auth token" });
+        return;
+    }
+
+    // Name length
+    if (name.length > NAME_MAX_LENGTH) {
+        callback({
+            success: false,
+            error: "Name too long."
+        });
         return;
     }
 

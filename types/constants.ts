@@ -5,6 +5,8 @@ export const UUID_LENGTH = NIL_UUID.length;
 export const ROOM_CODE_SIZE = 4;
 export const ROOM_CODE_ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
+export const NAME_MAX_LENGTH = 12;
+
 /**
  * Number of days the cookie lasts before it expires
  */
