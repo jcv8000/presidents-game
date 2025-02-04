@@ -16,7 +16,7 @@ export interface ClientToServerEvents {
     createNewGame: (callback: (resp: Response & { code?: string }) => void) => void;
 
     joinGame: (
-        data: { code: string; name: string; authToken: string },
+        data: { code: string; name: string; authToken: string; clientApiHash: string },
         callback: (resp: Response) => void
     ) => void;
 

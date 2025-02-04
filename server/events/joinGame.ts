@@ -7,7 +7,7 @@ import { Player, sanitizeGameState } from "types/Game";
 type Args = Parameters<ClientToServerEvents["joinGame"]>;
 
 export function onJoinGame(socket: TypedServerSocket, [data, callback]: Args) {
-    const { code, name, authToken } = sanitize(data);
+    const { code, name, authToken, clientApiHash } = sanitize(data);
     if (typeof authToken !== "string" || authToken.length != UUID_LENGTH) {
         callback({ success: false, error: "Bad auth token" });
         return;
@@ -47,6 +47,13 @@ export function onJoinGame(socket: TypedServerSocket, [data, callback]: Args) {
             callback({ success: false, error: "That name is already taken." });
             return;
         }
+    }
+
+    // Check client api version
+    const { VITE_CLIENT_API_HASH } = Bun.env;
+    if (clientApiHash != VITE_CLIENT_API_HASH) {
+        callback({ success: false, error: "Client out of date." });
+        return;
     }
 
     // Check if existing player reconnecting
