@@ -51,7 +51,12 @@ export default function Game() {
         socket.on("connect", () => {
             socket.emit(
                 "joinGame",
-                { code: code, name: name, authToken: authToken },
+                {
+                    code: code,
+                    name: name,
+                    authToken: authToken,
+                    clientApiHash: import.meta.env.VITE_CLIENT_API_HASH
+                },
                 ({ success, error }) => {
                     setTimeout(() => {
                         if (success) {
