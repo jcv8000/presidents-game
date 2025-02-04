@@ -15,6 +15,7 @@ import { useSnapshot } from "valtio";
 import Lobby from "./Lobby";
 import Presidents from "./Presidents";
 import { useClipboard } from "@mantine/hooks";
+import { IconLogout2 } from "@tabler/icons-react";
 
 export default function Game() {
     const { code } = useParams();
@@ -128,7 +129,7 @@ export default function Game() {
                 <div className={classes.code} onClick={() => clipboard.copy(window.location.href)}>
                     {clipboard.copied ? "Link Copied!" : `[ ${code?.toUpperCase()} ]`}
                 </div>
-                <Button size="xs" onClick={() => navigate("/")}>
+                <Button size="xs" onClick={() => navigate("/")} leftSection={<IconLogout2 />}>
                     Leave
                 </Button>
             </Group>

@@ -8,6 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { ROOM_CODE_SIZE } from "types/constants";
+import { IconHash, IconPlayerPlay, IconPlus, IconUser } from "@tabler/icons-react";
 
 export default function Home() {
     const [code, setCode] = useState(getCookie("code")?.toUpperCase() || "");
@@ -82,6 +83,7 @@ export default function Home() {
                     value={name}
                     onChange={(e) => setName(e.currentTarget.value)}
                     disabled={formDisabled}
+                    leftSection={<IconUser />}
                 />
 
                 <Divider size="sm" />
@@ -94,6 +96,7 @@ export default function Home() {
                         error={codeError}
                         value={code}
                         onChange={(e) => setCode(e.currentTarget.value.toUpperCase())}
+                        leftSection={<IconHash />}
                     />
                     <Button
                         fullWidth

@@ -11,6 +11,7 @@ import { useState } from "react";
 import { DECK_STYLES, DeckStyleName } from "types/Game";
 import { useDisclosure } from "@mantine/hooks";
 import { CardsDisplay } from "./CardDisplay";
+import { IconPlayCardStarFilled } from "@tabler/icons-react";
 
 export default function Lobby(props: { socket: TypedClientSocket }) {
     const { socket } = props;
@@ -33,6 +34,7 @@ export default function Lobby(props: { socket: TypedClientSocket }) {
                     searchable={false}
                     mb="xl"
                     style={{ userSelect: "none" }}
+                    leftSection={<IconPlayCardStarFilled />}
                 />
 
                 <Center>
@@ -71,7 +73,9 @@ export default function Lobby(props: { socket: TypedClientSocket }) {
                         <Space h="md" />
 
                         <Center>
-                            <Button onClick={open}>Choose Deck Style</Button>
+                            <Button onClick={open} leftSection={<IconPlayCardStarFilled />}>
+                                Choose Deck Style
+                            </Button>
                         </Center>
                     </>
                 )}

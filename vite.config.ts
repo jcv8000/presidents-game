@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import pkg from "./package.json";
 import paths from "vite-tsconfig-paths";
@@ -7,6 +7,16 @@ import { VitePWA } from "vite-plugin-pwa";
 // https://vite.dev/config/
 export default defineConfig(() => {
     process.env.VITE_APP_VERSION = pkg.version;
+
+    let devOptions: Partial<UserConfig> = {};
+    if (process.env.NODE_ENV === "development")
+        devOptions = {
+            resolve: {
+                alias: {
+                    "@tabler/icons-react": "@tabler/icons-react/dist/esm/icons/index.mjs"
+                }
+            }
+        };
 
     return {
         plugins: [
@@ -42,6 +52,7 @@ export default defineConfig(() => {
             host: import.meta.env.VITE_DEV_HOST || "localhost",
             port: 5173,
             strictPort: true
-        }
+        },
+        ...devOptions
     };
 });
