@@ -11,7 +11,6 @@ export const io = setupServer();
 export const games = new Map<string, GameState>();
 
 // TODO enforce an api version to connect sockets to make sure client is up to date
-// TODO name length limit
 
 io.on("connection", (socket) => {
     socket.on("disconnecting", (reason, desc) =>
