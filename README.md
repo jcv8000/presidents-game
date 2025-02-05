@@ -15,6 +15,6 @@ VITE_DEV_HOST=localhost
 VITE_CLIENT_API_HASH=d7ahc5a34
 ```
 
-In development mode connect to the client's Vite dev server port (shown in the console, usually `5173`).
+In development mode connect to the client's Vite dev server port (5173, change in `vite.config.ts`).
 
 In production mode connect to the `SERVER_PORT`.
