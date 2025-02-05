@@ -2,7 +2,7 @@
 
 WebSocket communication, Game Room codes with URL routing, persistent identity & rejoinable sessions.
 
-Uses Bun as the server runtime and package manager, Vite and React for the frontend.
+Uses [Bun](https://bun.sh/) as the server runtime and package manager, Vite and React for the frontend.
 
 ## Development & Building
 
