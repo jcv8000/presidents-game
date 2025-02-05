@@ -1,6 +1,6 @@
 # Web Game Starter
 
-WebSocket communication, Game Room codes with URL routing, persistent identity & rejoinable sessions.
+[Socket.io](https://socket.io/) communication, Game Room codes with URL routing, persistent identity & rejoinable sessions.
 
 Uses [Bun](https://bun.sh/) as the server runtime and package manager, Vite and React for the frontend.
 
