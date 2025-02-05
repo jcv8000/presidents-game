@@ -28,15 +28,23 @@ export const CARD_VALUES: { [key in CARD_RANK]: number } = {
 };
 
 export function newDeck() {
-    const deck = NORMAL_CARDS_RANK.flatMap((value) => {
-        return [
-            { rank: value, suit: "CLUBS" } as Card,
-            { rank: value, suit: "SPADES" } as Card,
-            { rank: value, suit: "HEARTS" } as Card,
-            { rank: value, suit: "DIAMONDS" } as Card
-        ];
-    });
+    // const deck = NORMAL_CARDS_RANK.flatMap((value) => {
+    //     return [
+    //         { rank: value, suit: "CLUBS" } as Card,
+    //         { rank: value, suit: "SPADES" } as Card,
+    //         { rank: value, suit: "HEARTS" } as Card,
+    //         { rank: value, suit: "DIAMONDS" } as Card
+    //     ];
+    // });
+    // deck.push({ rank: "JOKER", suit: "JOKER" });
+    // deck.push({ rank: "JOKER", suit: "JOKER" });
+
+    const deck: Card[] = [];
+
+    deck.push({ rank: "3", suit: "CLUBS" });
     deck.push({ rank: "JOKER", suit: "JOKER" });
     deck.push({ rank: "JOKER", suit: "JOKER" });
+    deck.push({ rank: "JOKER", suit: "JOKER" });
+
     return deck;
 }

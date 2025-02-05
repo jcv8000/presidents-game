@@ -8,8 +8,8 @@
         "noEmit": true,
         "skipLibCheck": true,
         "paths": {
-            "@/*": ["./client/*"],
-            "types/*": ["./types/*"]
+            "@/*": ["./src/client/*"],
+            "types/*": ["./src/types/*"]
         }
     }
 }
