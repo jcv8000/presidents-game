@@ -25,6 +25,17 @@ export class Player {
     hand: Card[] = [];
 }
 
+/*
+    TODO rewrite this to be an object like
+    type GameState = {
+        name: "lobby"
+    } | ... | {
+        name: "in-game";
+        currentCard: Card[]
+        whosTurn: Player | null;
+        ...
+    }
+*/
 export class GameState {
     host: Player | null = null;
 
