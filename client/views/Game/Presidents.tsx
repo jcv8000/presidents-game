@@ -7,7 +7,7 @@ import { store } from "@/utils/store";
 import { Card, CARD_VALUES, CARD_RANK, cardReferencesEquivalent } from "types/Game";
 import { TypedClientSocket } from "types/SocketIO";
 import { useSnapshot } from "valtio";
-import { CardsDisplay } from "./CardDisplay";
+import { CardsDisplay } from "@/components";
 import { JSX } from "react";
 
 export default function Presidents(props: { socket: TypedClientSocket }) {

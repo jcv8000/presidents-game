@@ -10,7 +10,7 @@ import { ROOM_SIZE_LIMIT } from "types/constants";
 import { useState } from "react";
 import { DECK_STYLES, DeckStyleName } from "types/Game";
 import { useDisclosure } from "@mantine/hooks";
-import { CardsDisplay } from "./CardDisplay";
+import { CardsDisplay } from "@/components";
 import { IconPlayCardStarFilled } from "@tabler/icons-react";
 
 export default function Lobby(props: { socket: TypedClientSocket }) {
