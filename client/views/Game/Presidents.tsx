@@ -100,13 +100,14 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                         </Title>
 
                         {mapPlays(plays.singleCardPlays, "Singles")}
-                        {mapPlays(plays.twoCardPlays, "Dubbs")}
-                        {mapPlays(plays.threeCardPlays, "Trips")}
+                        {mapPlays(plays.twoCardPlays, "Doubles")}
+                        {mapPlays(plays.threeCardPlays, "Triples")}
                         {mapPlays(plays.fourCardPlays, "Quads")}
                         {mapPlays(plays.jokerPlays, "Jokers")}
 
                         {state.currentCard.length > 0 && (
                             <Button
+                                color="red"
                                 size="compact-xl"
                                 onClick={() => {
                                     // Knock

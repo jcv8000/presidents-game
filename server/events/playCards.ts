@@ -2,6 +2,7 @@ import { ClientToServerEvents, TypedServerSocket } from "types/SocketIO";
 import { sanitize } from "../utils/sanitize";
 import { games, io } from "..";
 import { Card, CARD_VALUES, cardReferencesEquivalent, sanitizeGameState } from "types/Game";
+import { setIntervalWithEnd } from "../utils/setIntervalWithEnd";
 
 type Args = Parameters<ClientToServerEvents["playCards"]>;
 
@@ -100,6 +101,23 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
         sendNotification(`${game.whosTurn?.name} wiped.`);
     };
 
+    const roundOver = () => {
+        game.stage = "round-over";
+
+        setIntervalWithEnd({
+            func: () => {
+                game.timer--;
+                sendGameUpdate();
+            },
+            conditionToEnd: () => game.timer <= 0,
+            interval: 1000,
+            callback: () => {
+                game.stage = "trading-cards";
+                sendGameUpdate();
+            }
+        });
+    };
+
     const goNextPlayer = (opts?: { removeCurrentPlayer: boolean }) => {
         const index = game.stillHasCards.indexOf(player);
         game.whosTurn = game.stillHasCards[(index + 1) % game.stillHasCards.length];
@@ -130,11 +148,11 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
     // Check if player is out of cards
     if (player.hand.length == 0) {
         if (game.stillHasCards.length == 1) {
-            // GAME IS OVER!!!
+            // ROUND IS OVER!!!
             game.loser = player;
             sendNotification(`${player.name} lost the round.`);
 
-            game.stage = "ended";
+            roundOver();
         } else {
             if (game.players.length > 4) {
                 if (game.stillHasCards.length == game.players.length) {

@@ -19,3 +19,5 @@ export const NAME_COOKIE_EXPIRATION = 365;
 export const ARTIFICIAL_CONNECT_DELAY = 150;
 
 export const ROOM_SIZE_LIMIT = 8;
+
+export const TIMER_DELAY_SECONDS = 6;

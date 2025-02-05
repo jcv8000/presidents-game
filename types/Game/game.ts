@@ -1,3 +1,4 @@
+import { TIMER_DELAY_SECONDS } from "types/constants";
 import { Card, cardReferencesEquivalent, newDeck } from "./cards";
 import { DECK_STYLES, DeckStyle } from "./deckstyles";
 
@@ -27,8 +28,8 @@ export class Player {
 export class GameState {
     host: Player | null = null;
 
-    // lobby -> in-game -> trading-cards -> in-game -> ...
-    stage: "lobby" | "in-game" | "ended" = "lobby";
+    // lobby -> in-game -> round-over -> trading-cards -> in-game -> ...
+    stage: "lobby" | "in-game" | "round-over" | "trading-cards" = "lobby";
 
     players: Player[] = [];
     chat: Chat[] = [];
@@ -47,6 +48,8 @@ export class GameState {
     loser: Player | null = null;
 
     deckStyle: DeckStyle = DECK_STYLES.Default;
+
+    timer = TIMER_DELAY_SECONDS;
 
     private dealCards() {
         this.players.forEach((p) => (p.hand = []));

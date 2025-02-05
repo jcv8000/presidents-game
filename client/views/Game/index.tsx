@@ -7,7 +7,7 @@ import { showErrorNotification, showGameNotification } from "@/utils/notificatio
 import { socket } from "@/utils/socket";
 import { store } from "@/utils/store";
 import { notifications } from "@mantine/notifications";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { ARTIFICIAL_CONNECT_DELAY, UUID_LENGTH } from "types/constants";
 import { v4 as uuid } from "uuid";
@@ -16,6 +16,7 @@ import Lobby from "./Lobby";
 import Presidents from "./Presidents";
 import { useClipboard } from "@mantine/hooks";
 import { IconLogout2 } from "@tabler/icons-react";
+import RoundOver from "./RoundOver";
 
 export default function Game() {
     const { code } = useParams();
@@ -24,8 +25,6 @@ export default function Game() {
 
     const [joinedGame, setJoinedGame] = useState(false);
     const [connected, setConnected] = useState(false);
-
-    const viewport = useRef<HTMLDivElement>(null);
     const clipboard = useClipboard({ timeout: 2000 });
 
     useEffect(() => {
@@ -87,11 +86,6 @@ export default function Game() {
 
         socket.on("gameStateUpdate", (state) => {
             store.gameState = state;
-
-            setTimeout(() => {
-                if (viewport.current != null)
-                    viewport.current.scrollTo({ top: viewport.current.scrollHeight });
-            }, 2);
         });
 
         socket.on("notification", (message) => {
@@ -141,11 +135,7 @@ export default function Game() {
 
             {context.gameState.stage == "lobby" && <Lobby socket={socket} />}
             {context.gameState.stage == "in-game" && <Presidents socket={socket} />}
-            {context.gameState.stage == "ended" && (
-                <Center>
-                    <h1>Game over.</h1>
-                </Center>
-            )}
+            {context.gameState.stage == "round-over" && <RoundOver />}
         </>
     );
 }
