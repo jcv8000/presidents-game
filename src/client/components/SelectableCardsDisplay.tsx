@@ -23,7 +23,8 @@ export function SelectableCardsDisplay(props: {
                 if (c.suit == "DIAMONDS") [suit, color] = [<>♦&#xFE0E;</>, deckStyle.red];
                 if (c.suit == "HEARTS") [suit, color] = [<>♥&#xFE0E;</>, deckStyle.red];
                 if (c.suit == "SPADES") [suit, color] = [<>♠&#xFE0E;</>, deckStyle.black];
-                if (c.suit == "JOKER") [suit, color] = [<>?</>, deckStyle.black]; // ☠
+                if (c.suit == "JOKER" || c.suit == "JOKER2")
+                    [suit, color] = [<>?</>, deckStyle.black]; // ☠
 
                 const showSuit = deckStyle.showSuit == undefined ? true : deckStyle.showSuit;
                 const isSelected = selected.includes(cardIndex);

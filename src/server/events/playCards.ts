@@ -102,6 +102,7 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
     };
 
     const roundOver = () => {
+        game.players.forEach((p) => (p.hand = []));
         game.stage = "round-over";
 
         setIntervalWithEnd({
@@ -148,10 +149,16 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
 
     // Check if player is out of cards
     if (player.hand.length == 0) {
-        if (game.stillHasCards.length == 1) {
+        if (game.stillHasCards.length == 2) {
             // ROUND IS OVER!!!
-            game.loser = player;
-            sendNotification(`${player.name} lost the round.`);
+            if (game.players.length > 4) {
+                game.secondToLast = player;
+                sendNotification(`${player.name} got 2nd to last.`);
+            }
+            const index = game.stillHasCards.indexOf(player);
+            game.stillHasCards.splice(index, 1);
+            game.loser = game.stillHasCards[0];
+            sendNotification(`${game.loser.name} lost the round.`);
 
             roundOver();
         } else {
