@@ -6,6 +6,7 @@ import { onJoinGame } from "./events/joinGame";
 import { onSendChat } from "./events/sendChat";
 import { onStartGame } from "./events/startGame";
 import { onPlayCards } from "./events/playCards";
+import { onGiveCards } from "./events/giveCards";
 
 export const io = setupServer();
 export const games = new Map<string, GameState>();
@@ -26,4 +27,6 @@ io.on("connection", (socket) => {
     socket.on("startGame", (data, callback) => onStartGame(socket, [data, callback]));
 
     socket.on("playCards", (data, callback) => onPlayCards(socket, [data, callback]));
+
+    socket.on("giveCards", (data, callback) => onGiveCards(socket, [data, callback]));
 });

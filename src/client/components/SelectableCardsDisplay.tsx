@@ -1,14 +1,22 @@
-import classes from "./CardDisplay.module.css";
+import classes from "./SelectableCardsDisplay.module.css";
 
-import { Center, Group } from "@mantine/core";
+import { Center, Flex, Group } from "@mantine/core";
 import { Card, DeckStyle } from "types/Game";
 import { JSX } from "react";
+import clsx from "clsx";
 
-export function CardsDisplay(props: { cards: Card[]; deckStyle: DeckStyle }) {
-    const { cards, deckStyle } = props;
+export function SelectableCardsDisplay(props: {
+    cards: Card[];
+    deckStyle: DeckStyle;
+    selected: number[];
+    onChange?: (value: number[]) => void;
+    limit?: number;
+}) {
+    const { cards, deckStyle, selected, onChange, limit } = props;
+
     return (
-        <Group gap="xs">
-            {cards.map((c, index) => {
+        <Flex justify="center" align="center" wrap="wrap" gap="xs">
+            {cards.map((c, cardIndex) => {
                 let suit: JSX.Element = <></>;
                 let color = "";
                 if (c.suit == "CLUBS") [suit, color] = [<>♣&#xFE0E;</>, deckStyle.black];
@@ -18,11 +26,12 @@ export function CardsDisplay(props: { cards: Card[]; deckStyle: DeckStyle }) {
                 if (c.suit == "JOKER") [suit, color] = [<>?</>, deckStyle.black]; // ☠
 
                 const showSuit = deckStyle.showSuit == undefined ? true : deckStyle.showSuit;
+                const isSelected = selected.includes(cardIndex);
 
                 return (
                     <span
-                        key={index}
-                        className={classes.presidentsCard}
+                        key={cardIndex}
+                        className={clsx(classes.presidentsCard, isSelected && classes.selected)}
                         style={{
                             color: color,
                             backgroundColor: deckStyle.bg,
@@ -30,6 +39,18 @@ export function CardsDisplay(props: { cards: Card[]; deckStyle: DeckStyle }) {
                                 ? `url(${deckStyle.bgImageUrl})`
                                 : "",
                             textShadow: deckStyle.textShadow
+                        }}
+                        onClick={() => {
+                            if (onChange) {
+                                if (isSelected) {
+                                    const newSelected = Array.from(selected);
+                                    newSelected.splice(newSelected.indexOf(cardIndex), 1);
+                                    onChange(newSelected);
+                                } else {
+                                    if (selected.length < (limit || 54))
+                                        onChange([...selected, cardIndex]);
+                                }
+                            }
                         }}
                     >
                         <Center
@@ -51,6 +72,6 @@ export function CardsDisplay(props: { cards: Card[]; deckStyle: DeckStyle }) {
                     </span>
                 );
             })}
-        </Group>
+        </Flex>
     );
 }

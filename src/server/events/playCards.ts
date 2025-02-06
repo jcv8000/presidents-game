@@ -113,6 +113,7 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
             interval: 1000,
             callback: () => {
                 game.stage = "trading-cards";
+                game.dealCards();
                 sendGameUpdate();
             }
         });

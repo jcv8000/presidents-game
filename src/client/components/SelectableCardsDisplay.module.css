@@ -1,0 +1,33 @@
+.presidentsCard {
+    width: 76px;
+    position: relative;
+
+    border-radius: var(--mantine-radius-sm);
+
+    padding: var(--mantine-spacing-md);
+
+    font-size: 48px;
+    user-select: none;
+
+    box-shadow: var(--mantine-shadow-lg);
+
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    transition: transform 0.1s linear;
+    @mixin hover {
+        transform: scale(1.1);
+    }
+}
+
+.selected {
+    box-shadow: none;
+    outline: 3px solid var(--mantine-color-violet-6);
+    outline-offset: 3px;
+}
+
+.suit {
+    position: absolute;
+    display: inline;
+    font-size: var(--mantine-font-size-md);
+}

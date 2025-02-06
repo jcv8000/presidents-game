@@ -26,6 +26,8 @@ export interface ClientToServerEvents {
 
     /** @param cardIndexes Numbers separated by commas. Example: "0,3,7" */
     playCards: (data: { cardIndexes: string }, callback: (resp: Response) => void) => void;
+
+    giveCards: (data: { cardIndexes: string }, callback: (resp: Response) => void) => void;
 }
 
 interface SocketData {

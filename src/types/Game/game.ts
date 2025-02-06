@@ -62,7 +62,10 @@ export class GameState {
 
     timer = TIMER_DELAY_SECONDS;
 
-    private dealCards() {
+    presidentAndLoserTraded = false;
+    vpAnd2ndTraded = false;
+
+    dealCards() {
         this.players.forEach((p) => (p.hand = []));
 
         // Shuffle deck

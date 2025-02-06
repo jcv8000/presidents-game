@@ -80,9 +80,10 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                             {players.map((p) => {
                                 let text = p.hand.length.toString();
                                 if (state.president?.name == p.name) text = "PRESIDENT";
-                                if (state.vicePresident?.name == p.name) text = "VICE PRES";
-                                if (state.secondToLast?.name == p.name) text = "2nd LAST";
-                                if (state.loser?.name == p.name) text = "LOSER";
+                                else if (state.vicePresident?.name == p.name) text = "VICE PRES";
+                                else if (state.secondToLast?.name == p.name) text = "2nd LAST";
+                                else if (state.loser?.name == p.name) text = "LOSER";
+                                else if (p.hand.length == 0) text = "out";
                                 return <td key={p.name}>{text}</td>;
                             })}
                         </tr>

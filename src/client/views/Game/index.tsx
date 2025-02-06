@@ -17,6 +17,7 @@ import Presidents from "./Presidents";
 import { useClipboard } from "@mantine/hooks";
 import { IconLogout2 } from "@tabler/icons-react";
 import RoundOver from "./RoundOver";
+import TradingCards from "./TradingCards";
 
 export default function Game() {
     const { code } = useParams();
@@ -136,6 +137,7 @@ export default function Game() {
             {context.gameState.stage == "lobby" && <Lobby socket={socket} />}
             {context.gameState.stage == "in-game" && <Presidents socket={socket} />}
             {context.gameState.stage == "round-over" && <RoundOver />}
+            {context.gameState.stage == "trading-cards" && <TradingCards socket={socket} />}
         </>
     );
 }
