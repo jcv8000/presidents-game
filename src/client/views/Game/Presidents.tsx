@@ -123,6 +123,8 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                     </>
                 )}
 
+                {!isMyTurn && <Title order={2}>{state.whosTurn?.name}'s turn</Title>}
+
                 {state.president?.name == my.name && (
                     <Title order={2}>You are the President.</Title>
                 )}
