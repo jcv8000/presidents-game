@@ -30,6 +30,12 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
         return <Title>Trade done.</Title>;
     }
 
+    const isSmallGame = state.players.length <= 4;
+
+    let numCards = 0;
+    if (isVP) numCards = 1;
+    if (isPresident) numCards = isSmallGame ? 1 : 2;
+
     if (isLoser || is2ndToLast) {
         const myHand = my.hand
             .map((c) => c)
@@ -41,7 +47,8 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
                         <>
                             <Title ta="center">You lost.</Title>
                             <Title ta="center" order={2}>
-                                Your two best cards will go to {state.president?.name}.
+                                Your {isSmallGame ? "best card" : "two best cards"} will go to{" "}
+                                {state.president?.name}.
                             </Title>
                         </>
                     )}
@@ -56,7 +63,7 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
                     <SelectableCardsDisplay
                         cards={myHand}
                         deckStyle={state.deckStyle}
-                        selected={[0, 1]}
+                        selected={isSmallGame ? [0] : [0, 1]}
                         onChange={() => {}}
                     />
                 </Stack>
@@ -75,7 +82,8 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
                         <>
                             <Title ta="center">You are the President.</Title>
                             <Title ta="center" order={2}>
-                                Choose two cards to give to {state.loser?.name}.
+                                Choose {isSmallGame ? "one card" : "two cards"} to give to{" "}
+                                {state.loser?.name}.
                             </Title>
                         </>
                     )}
@@ -95,7 +103,7 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
                         deckStyle={state.deckStyle}
                         selected={selectedCards}
                         onChange={(v) => setSelectedCards(v)}
-                        limit={isPresident ? 2 : 1}
+                        limit={numCards}
                     />
 
                     <Space h="xl" />
