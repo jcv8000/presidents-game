@@ -4,7 +4,7 @@ export type CARD_RANK = (typeof NORMAL_CARDS_RANK)[number] | "JOKER";
 
 export type Card = {
     rank: CARD_RANK;
-    suit: "CLUBS" | "SPADES" | "HEARTS" | "DIAMONDS" | "JOKER";
+    suit: "CLUBS" | "SPADES" | "HEARTS" | "DIAMONDS" | "JOKER" | "JOKER2";
 };
 export function cardReferencesEquivalent(a: Card, b: Card) {
     return a.rank == b.rank && a.suit == b.suit;
@@ -37,7 +37,7 @@ export function newDeck() {
         ];
     });
     deck.push({ rank: "JOKER", suit: "JOKER" });
-    deck.push({ rank: "JOKER", suit: "JOKER" });
+    deck.push({ rank: "JOKER", suit: "JOKER2" });
 
     // const deck: Card[] = [];
 
