@@ -2,7 +2,7 @@
 
 [Socket.io](https://socket.io/) communication, Game Room codes with URL routing, persistent identity & rejoinable sessions.
 
-Uses [Bun](https://bun.sh/) as the server runtime and package manager, Vite and React for the frontend, Express.js for the backend.
+Uses [Bun](https://bun.sh/) as the server runtime and package manager, Vite and React for the frontend, Express for the backend.
 
 ## Development & Building
 
@@ -17,4 +17,4 @@ VITE_CLIENT_API_HASH=d7ahc5a34
 
 In development mode connect to the client's Vite dev server port (5173, change in `vite.config.ts`).
 
-In production mode connect to the `SERVER_PORT`.
+In production connect to the `SERVER_PORT`.
