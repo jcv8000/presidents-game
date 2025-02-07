@@ -1,4 +1,4 @@
-# Web Game Starter
+# Presidents Online Card Game
 
 [Socket.io](https://socket.io/) communication, Game Room codes with URL routing, persistent identity & rejoinable sessions.
 
