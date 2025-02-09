@@ -11,8 +11,6 @@ import { onGiveCards } from "./events/giveCards";
 export const io = setupServer();
 export const games = new Map<string, GameState>();
 
-// TODO enforce an api version to connect sockets to make sure client is up to date
-
 io.on("connection", (socket) => {
     socket.on("disconnecting", (reason, desc) =>
         onDisconnecting(socket, { reason: reason, description: desc })

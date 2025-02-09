@@ -48,3 +48,12 @@ export function newDeck() {
 
     return deck;
 }
+
+export function sortCards(cards: Card[], order: "ascending" | "descending" = "ascending") {
+    let [v1, v2] = [-1, 1];
+    if (order == "descending") [v1, v2] = [1, -1];
+
+    return cards
+        .map((c) => c)
+        .sort((a, b) => (CARD_VALUES[b.rank] > CARD_VALUES[a.rank] ? v1 : v2));
+}

@@ -1,7 +1,13 @@
 import { ClientToServerEvents, TypedServerSocket } from "types/SocketIO";
 import { sanitize } from "../utils/sanitize";
 import { games, io } from "..";
-import { Card, CARD_VALUES, cardReferencesEquivalent, sanitizeGameState } from "types/Game";
+import {
+    Card,
+    CARD_VALUES,
+    cardReferencesEquivalent,
+    sanitizeGameState,
+    sortCards
+} from "types/Game";
 import { TIMER_DELAY_SECONDS } from "types/constants";
 
 type Args = Parameters<ClientToServerEvents["giveCards"]>;
@@ -52,6 +58,8 @@ export function onGiveCards(socket: TypedServerSocket, [data, callback]: Args) {
         game.currentCard = [];
 
         game.players.forEach((p) => {
+            p.hand = sortCards(p.hand);
+
             p.hand.forEach((c) => {
                 if (cardReferencesEquivalent(c, { rank: "3", suit: "CLUBS" })) game.whosTurn = p;
             });

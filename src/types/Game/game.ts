@@ -1,5 +1,5 @@
 import { TIMER_DELAY_SECONDS } from "types/constants";
-import { Card, cardReferencesEquivalent, newDeck } from "./cards";
+import { Card, cardReferencesEquivalent, newDeck, sortCards } from "./cards";
 import { DECK_STYLES, DeckStyle } from "./deckstyles";
 
 type Chat = {
@@ -75,19 +75,21 @@ export class GameState {
             .sort((a, b) => a.sort - b.sort)
             .map(({ value }) => value);
 
-        // TODO offset "who the dealer is" for each round
+        // The (i + this.round - 1) is offsetting "who the dealer is" for each round
         for (let i = 0; i < 54; i++) {
             const card = deck.shift();
             if (card) this.players[(i + this.round - 1) % this.players.length].hand.push(card);
         }
+
+        // Sort players' cards in hands
+        this.players.forEach((p) => {
+            p.hand = sortCards(p.hand);
+        });
     }
 
-    startRound() {
+    startFirstRound() {
         this.round++;
         this.dealCards();
-        if (this.round >= 2) {
-            // make players trade cards
-        }
 
         this.players.forEach((p) => {
             p.hand.forEach((c) => {

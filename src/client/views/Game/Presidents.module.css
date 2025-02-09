@@ -13,3 +13,10 @@
     padding: var(--mantine-spacing-sm);
     margin-bottom: var(--mantine-spacing-lg);
 }
+
+.playBtnRoot {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

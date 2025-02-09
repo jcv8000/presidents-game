@@ -10,8 +10,8 @@ import { ROOM_SIZE_LIMIT } from "types/constants";
 import { useState } from "react";
 import { DECK_STYLES, DeckStyleName } from "types/Game";
 import { useDisclosure } from "@mantine/hooks";
-import { CardsDisplay } from "@/components";
 import { IconPlayCardStarFilled } from "@tabler/icons-react";
+import { CardsDisplay } from "@/components";
 
 export default function Lobby(props: { socket: TypedClientSocket }) {
     const { socket } = props;
@@ -41,19 +41,12 @@ export default function Lobby(props: { socket: TypedClientSocket }) {
                     <CardsDisplay
                         cards={[
                             { rank: "J", suit: "CLUBS" },
-                            { rank: "Q", suit: "DIAMONDS" }
-                        ]}
-                        deckStyle={DECK_STYLES[deckStyleName]}
-                    />
-                </Center>
-                <Space h="sm" />
-                <Center mb="md">
-                    <CardsDisplay
-                        cards={[
+                            { rank: "Q", suit: "DIAMONDS" },
                             { rank: "K", suit: "HEARTS" },
                             { rank: "A", suit: "SPADES" }
                         ]}
                         deckStyle={DECK_STYLES[deckStyleName]}
+                        maxWidth={150}
                     />
                 </Center>
             </Modal>

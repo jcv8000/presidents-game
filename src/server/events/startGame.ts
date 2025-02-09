@@ -34,7 +34,7 @@ export function onStartGame(socket: TypedServerSocket, [data, callback]: Args) {
         // TODO kick disconnected players on start?
         game.players = game.players.filter((p) => p.connected == true);
 
-        game.startRound();
+        game.startFirstRound();
 
         io.to(roomCode).emit("gameStateUpdate", sanitizeGameState(game)); // includes sender
         callback({ success: true });

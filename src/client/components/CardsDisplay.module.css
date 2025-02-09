@@ -15,15 +15,19 @@
     background-size: cover;
 
     transition: transform 0.1s linear;
-    @mixin hover {
-        transform: scale(1.1);
-    }
+}
+.presidentsCard:not(.presidentsCardDisabled):hover {
+    transform: scale(1.1);
 }
 
-.selected {
+.presidentsCardSelected {
     box-shadow: none;
     outline: 3px solid var(--mantine-color-violet-6);
     outline-offset: 3px;
+}
+
+.presidentsCardDisabled {
+    filter: brightness(0.5);
 }
 
 .suit {

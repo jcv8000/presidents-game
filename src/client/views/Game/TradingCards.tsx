@@ -1,13 +1,11 @@
-import classes from "./TradingCards.module.css";
-
 import { Container, Stack, Title, Loader, Button, Space } from "@mantine/core";
 import { useSnapshot } from "valtio";
 import { store } from "@/utils/store";
-import { Card, CARD_VALUES, cardReferencesEquivalent } from "types/Game";
-import { SelectableCardsDisplay } from "@/components/SelectableCardsDisplay";
+import { sortCards } from "types/Game";
 import { useState } from "react";
 import { TypedClientSocket } from "types/SocketIO";
 import { showErrorNotification, showGameNotification } from "@/utils/notifications";
+import { CardsDisplay } from "@/components";
 
 export default function TradingCards(props: { socket: TypedClientSocket }) {
     const { socket } = props;
@@ -21,7 +19,7 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
     const is2ndToLast = my.name == state.secondToLast?.name || false;
     const isLoser = my.name == state.loser?.name || false;
 
-    const [selectedCards, setSelectedCards] = useState<number[]>([]);
+    const [selectedCardIndexes, setSelectedCardIndexes] = useState<number[]>([]);
 
     if (state.presidentAndLoserTraded && (isLoser || isPresident)) {
         return <Title>Trade done.</Title>;
@@ -37,9 +35,7 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
     if (isPresident) numCards = isSmallGame ? 1 : 2;
 
     if (isLoser || is2ndToLast) {
-        const myHand = my.hand
-            .map((c) => c)
-            .sort((a, b) => (CARD_VALUES[b.rank] > CARD_VALUES[a.rank] ? 1 : -1));
+        const descendingHand = sortCards(my.hand, "descending");
         return (
             <Container p="lg">
                 <Stack align="center">
@@ -60,11 +56,10 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
                             </Title>
                         </>
                     )}
-                    <SelectableCardsDisplay
-                        cards={myHand}
+                    <CardsDisplay
+                        cards={descendingHand}
                         deckStyle={state.deckStyle}
-                        selected={isSmallGame ? [0] : [0, 1]}
-                        onChange={() => {}}
+                        selectedIndexes={isSmallGame ? [0] : [0, 1]}
                     />
                 </Stack>
             </Container>
@@ -72,9 +67,6 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
     }
 
     if (isPresident || isVP) {
-        const myHand = my.hand
-            .map((c) => c)
-            .sort((a, b) => (CARD_VALUES[b.rank] > CARD_VALUES[a.rank] ? -1 : 1));
         return (
             <Container p="lg">
                 <Stack align="center">
@@ -98,12 +90,21 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
 
                     <Space h="xl" />
 
-                    <SelectableCardsDisplay
-                        cards={myHand}
+                    <CardsDisplay
+                        cards={my.hand}
                         deckStyle={state.deckStyle}
-                        selected={selectedCards}
-                        onChange={(v) => setSelectedCards(v)}
-                        limit={numCards}
+                        selectedIndexes={selectedCardIndexes}
+                        selectLimit={numCards}
+                        onChange={setSelectedCardIndexes}
+                        enableCards={(card) => {
+                            if (selectedCardIndexes.length == numCards) {
+                                for (let i = 0; i < selectedCardIndexes.length; i++) {
+                                    if (card == my.hand[selectedCardIndexes[i]]) return true;
+                                }
+                                return false;
+                            }
+                            return true;
+                        }}
                     />
 
                     <Space h="xl" />
@@ -111,22 +112,9 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
                     <Button
                         size="compact-xl"
                         onClick={() => {
-                            const realIndexes: number[] = [];
-                            const cards: Card[] = [];
-                            for (let i = 0; i < selectedCards.length; i++) {
-                                cards.push(myHand[i]);
-                            }
-
-                            cards.forEach((c) => {
-                                const index = my.hand.findIndex((v) =>
-                                    cardReferencesEquivalent(c, v)
-                                );
-                                realIndexes.push(index);
-                            });
-
                             socket.emit(
                                 "giveCards",
-                                { cardIndexes: realIndexes.join(",") },
+                                { cardIndexes: selectedCardIndexes.join(",") },
                                 ({ success, error }) => {
                                     if (!success) showErrorNotification({ message: error });
                                     else showGameNotification("Traded cards.");

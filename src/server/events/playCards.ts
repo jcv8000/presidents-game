@@ -89,6 +89,24 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
         }
     }
 
+    if (game.firstPlayOfRound) {
+        if (cards.length != 1) {
+            callback({
+                success: false,
+                error: "Have to start with 3 of clubs."
+            });
+            return;
+        } else if (cards.length == 1) {
+            if (cards[0].rank != "3" || cards[0].suit != "CLUBS") {
+                callback({
+                    success: false,
+                    error: "Have to start with 3 of clubs."
+                });
+                return;
+            }
+        }
+    }
+
     //
     // ACTUAL GAMEPLAY LOGIC, PLAY IS LEGAL
     //
