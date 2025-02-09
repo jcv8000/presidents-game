@@ -172,6 +172,9 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
             if (game.players.length > 4) {
                 game.secondToLast = player;
                 sendNotification(`${player.name} got 2nd to last.`);
+            } else if (game.players.length == 2) {
+                game.president = player;
+                sendNotification(`${player.name} is the President.`);
             }
             const index = game.stillHasCards.indexOf(player);
             game.stillHasCards.splice(index, 1);
