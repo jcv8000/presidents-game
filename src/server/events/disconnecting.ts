@@ -6,6 +6,7 @@ import { games, io } from "..";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Args = { reason: DisconnectReason; description?: any };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function onDisconnecting(socket: TypedServerSocket, args: Args) {
     const { roomCode, authToken } = socket.data;
 

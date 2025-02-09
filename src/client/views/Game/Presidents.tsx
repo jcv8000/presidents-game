@@ -170,7 +170,7 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                         <CardsDisplay
                             cards={my.hand}
                             deckStyle={state.deckStyle}
-                            enableCards={(c) => {
+                            enableCards={() => {
                                 return false;
                             }}
                         />
