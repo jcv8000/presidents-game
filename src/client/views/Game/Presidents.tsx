@@ -32,6 +32,55 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
             goodToPlay = true;
     }
 
+    let topButton = (
+        <Button size="compact-xl" mb="sm" disabled={true}>
+            Select cards to play.
+        </Button>
+    );
+    if (state.currentCard.length > 0) {
+        topButton = (
+            <Button
+                color="red"
+                size="compact-xl"
+                mb="sm"
+                onClick={() => {
+                    // Knock
+                    socket.emit("playCards", { cardIndexes: "" }, ({ error }) => {
+                        if (error) showErrorNotification({ message: error });
+                    });
+                    setSelectedIndexes([]);
+                }}
+            >
+                KNOCK
+            </Button>
+        );
+    }
+    if (selectedIndexes.length > 0) {
+        topButton = (
+            <Button
+                size="compact-xl"
+                mb="sm"
+                onClick={() => {
+                    setSelectedIndexes([]);
+                    socket.emit(
+                        "playCards",
+                        { cardIndexes: selectedIndexes.join(",") },
+                        ({ success, error }) => {
+                            if (!success) showErrorNotification({ message: error });
+                        }
+                    );
+                }}
+                disabled={!goodToPlay}
+            >
+                {goodToPlay ? (
+                    playButtonText(selectedIndexes.map((i) => my.hand[i]))
+                ) : (
+                    <>Select {state.currentCard.length - selectedIndexes.length} more card(s).</>
+                )}
+            </Button>
+        );
+    }
+
     return (
         <Container size="md">
             <Stack align="center" mb={64}>
@@ -69,22 +118,7 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                             {state.currentCard.length == 0 ? <>You start.</> : <>It's your turn.</>}
                         </Title>
 
-                        {state.currentCard.length > 0 && (
-                            <Button
-                                color="red"
-                                size="compact-xl"
-                                mb="sm"
-                                onClick={() => {
-                                    // Knock
-                                    socket.emit("playCards", { cardIndexes: "" }, ({ error }) => {
-                                        if (error) showErrorNotification({ message: error });
-                                    });
-                                    setSelectedIndexes([]);
-                                }}
-                            >
-                                KNOCK
-                            </Button>
-                        )}
+                        {topButton}
 
                         <CardsDisplay
                             cards={my.hand}
