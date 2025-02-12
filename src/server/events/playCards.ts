@@ -120,6 +120,7 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
     };
 
     const roundOver = () => {
+        game.whosTurn = null;
         game.players.forEach((p) => (p.hand = []));
         game.stage = "round-over";
 
