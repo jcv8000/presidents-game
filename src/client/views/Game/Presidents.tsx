@@ -96,8 +96,13 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                             }
                             enableCards={(card) => {
                                 if (state.firstPlayOfRound) {
-                                    if (card.rank == "3" && card.suit == "CLUBS") return true;
-                                    return false;
+                                    // First play of round, if they have 3 of clubs they can play any # of 3's
+                                    if (
+                                        my.hand.filter((c) => c.rank == "3" && c.suit == "CLUBS")
+                                            .length == 1
+                                    ) {
+                                        if (card.rank == "3") return true;
+                                    }
                                 }
 
                                 if (state.currentCard.length > 0) {

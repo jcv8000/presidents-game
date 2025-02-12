@@ -80,30 +80,16 @@ export function onPlayCards(socket: TypedServerSocket, [data, callback]: Args) {
             const cc = game.currentCard[i];
             const c = cards[i];
             if (CARD_VALUES[c.rank] < CARD_VALUES[cc.rank]) {
-                callback({
-                    success: false,
-                    error: "Cards do not match or beat current cards."
-                });
+                callback({ success: false, error: "Cards do not match or beat current cards." });
                 return;
             }
         }
     }
 
     if (game.firstPlayOfRound) {
-        if (cards.length != 1) {
-            callback({
-                success: false,
-                error: "Have to start with 3 of clubs."
-            });
+        if (cards.filter((c) => c.rank == "3" && c.suit == "CLUBS").length != 1) {
+            callback({ success: false, error: "Have to start with 3 of clubs." });
             return;
-        } else if (cards.length == 1) {
-            if (cards[0].rank != "3" || cards[0].suit != "CLUBS") {
-                callback({
-                    success: false,
-                    error: "Have to start with 3 of clubs."
-                });
-                return;
-            }
         }
     }
 
