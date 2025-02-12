@@ -87,6 +87,7 @@ export default function Game() {
 
         socket.on("gameStateUpdate", (state) => {
             store.gameState = state;
+            window.scrollTo({ top: 0 });
         });
 
         socket.on("notification", (message) => {
