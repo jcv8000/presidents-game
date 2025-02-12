@@ -17,7 +17,7 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
     const state = context.gameState;
     const players = state.players;
 
-    const my = state.players.find((p) => p.name == context.name)!;
+    const my = players.find((p) => p.name == context.name)!;
 
     const isMyTurn = state.whosTurn?.name == context.name || false;
 
