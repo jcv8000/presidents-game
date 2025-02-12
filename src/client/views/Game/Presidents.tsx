@@ -49,6 +49,7 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                         if (error) showErrorNotification({ message: error });
                     });
                     setSelectedIndexes([]);
+                    window.scrollTo({ top: 0 });
                 }}
             >
                 KNOCK
@@ -174,7 +175,6 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                                         radius={0}
                                         style={transitionStyles}
                                         onClick={() => {
-                                            setSelectedIndexes([]);
                                             socket.emit(
                                                 "playCards",
                                                 { cardIndexes: selectedIndexes.join(",") },
@@ -183,6 +183,8 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                                                         showErrorNotification({ message: error });
                                                 }
                                             );
+                                            setSelectedIndexes([]);
+                                            window.scrollTo({ top: 0 });
                                         }}
                                         disabled={!goodToPlay}
                                     >
