@@ -84,7 +84,7 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
 
     return (
         <Container size="md">
-            <Stack align="center" mb={64}>
+            <Stack align="center" mb={72}>
                 <table className={classes.table}>
                     <tbody>
                         <tr>
@@ -172,7 +172,7 @@ export default function Presidents(props: { socket: TypedClientSocket }) {
                                 {(transitionStyles) => (
                                     <Button
                                         fullWidth
-                                        radius={0}
+                                        size="md"
                                         style={transitionStyles}
                                         onClick={() => {
                                             socket.emit(
