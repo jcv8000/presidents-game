@@ -1,4 +1,6 @@
-import { Container, Stack, Title, Loader, Button, Space } from "@mantine/core";
+import classes from "./TradingCards.module.css";
+
+import { Container, Stack, Title, Loader, Button, Space, Transition } from "@mantine/core";
 import { useSnapshot } from "valtio";
 import { store } from "@/utils/store";
 import { sortCards } from "types/Game";
@@ -106,25 +108,31 @@ export default function TradingCards(props: { socket: TypedClientSocket }) {
                             return true;
                         }}
                     />
-
-                    <Space h="xl" />
-
-                    <Button
-                        size="compact-xl"
-                        onClick={() => {
-                            socket.emit(
-                                "giveCards",
-                                { cardIndexes: selectedCardIndexes.join(",") },
-                                ({ success, error }) => {
-                                    if (!success) showErrorNotification({ message: error });
-                                    else showGameNotification("Traded cards.");
-                                }
-                            );
-                        }}
-                    >
-                        Give Cards
-                    </Button>
                 </Stack>
+
+                <div className={classes.playBtnRoot}>
+                    <Transition transition="slide-up" mounted={selectedCardIndexes.length > 0}>
+                        {(transitionStyles) => (
+                            <Button
+                                fullWidth
+                                size="md"
+                                style={transitionStyles}
+                                onClick={() => {
+                                    socket.emit(
+                                        "giveCards",
+                                        { cardIndexes: selectedCardIndexes.join(",") },
+                                        ({ success, error }) => {
+                                            if (!success) showErrorNotification({ message: error });
+                                            else showGameNotification("Traded cards.");
+                                        }
+                                    );
+                                }}
+                            >
+                                Give Cards
+                            </Button>
+                        )}
+                    </Transition>
+                </div>
             </Container>
         );
     }
