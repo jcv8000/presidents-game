@@ -28,3 +28,39 @@ io.on("connection", (socket) => {
 
     socket.on("giveCards", (data, callback) => onGiveCards(socket, [data, callback]));
 });
+
+/**
+ * Clean up empty games
+ *
+ * Add all games with 0 players to the chopping block,
+ * then on the next interval it will double-check that
+ * there are still 0 players in the game before destroying.
+ */
+const choppingBlock = new Set<string>();
+setInterval(
+    () => {
+        const gameIsEmpty = (g: GameState) =>
+            g.players.filter((p) => p.connected === true).length === 0;
+
+        for (const code of choppingBlock) {
+            if (games.has(code)) {
+                const g = games.get(code)!;
+
+                if (gameIsEmpty(g)) {
+                    games.delete(code);
+                    console.log(`Destroying lobby: ${code.toUpperCase()}`);
+                } else {
+                    choppingBlock.delete(code);
+                }
+            }
+        }
+
+        for (const [code, g] of games) {
+            if (gameIsEmpty(g)) {
+                choppingBlock.add(code);
+                console.log(`${code.toUpperCase()} added to chopping block.`);
+            }
+        }
+    },
+    5 * 60 * 1_000
+);
